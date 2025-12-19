@@ -16,9 +16,9 @@ function NavItem(props: Props) {
     <Link href={href}>
       <div
         className={cn(
-          "px-3 py-2 flex hover:bg-[#002F70] hover:text-white transition items-center gap-3 rounded",
+          "flex items-center gap-3 rounded px-3 py-2 transition hover:bg-[#002F70] hover:text-white",
           {
-            "bg-[#002F70] text-white ": isActive
+            "bg-[#002F70] text-white": isActive
           }
         )}
       >

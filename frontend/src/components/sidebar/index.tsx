@@ -9,6 +9,7 @@ import {
   Tag,
   Users
 } from "lucide-react";
+import Link from "next/link";
 import NavItem from "./nav-item";
 
 const mainNavItems = [
@@ -47,10 +48,15 @@ const mainNavItems = [
 export function AppSidebar() {
   return (
     <div className="w-70 bg-white px-2">
+      <div className="mt-10 flex justify-center">
+        <Link href="/">
+          <h2 className="text-2xl font-extrabold uppercase">Anycomp Clone</h2>
+        </Link>
+      </div>
       {/* Profile */}
-      <div className="mt-30 px-3">
+      <div className="mt-10 px-3">
         <div className="mb-10 space-y-2">
-          <h2 className="font-semibold text-lg">Profile</h2>
+          <h2 className="text-lg font-semibold">Profile</h2>
           <div className="flex items-center gap-3">
             <Avatar />
             <div>
@@ -62,7 +68,7 @@ export function AppSidebar() {
       </div>
       {/* Nav menu */}
       <div className="mb-4 px-3">
-        <p className="font-bold text-sm text-gray-500">Dashboard</p>
+        <p className="text-sm font-bold text-gray-500">Dashboard</p>
       </div>
       <div className="flex flex-col space-y-1">
         {mainNavItems.map((item, idx) => (
