@@ -1,2 +1,9 @@
-@layer theme, base, mui, components, utilities;
-@import "tailwindcss";
+body {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: inherit; /* Inherit color from parent element */
+  text-decoration: none; /* Removes the underline */
+}

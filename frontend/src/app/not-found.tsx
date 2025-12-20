@@ -1,15 +1,28 @@
-import { SearchAlert } from "lucide-react";
+import { Box, Typography } from "@mui/material";
+import { AlertTriangle } from "lucide-react";
 
 function Page() {
   return (
-    <div className="h-full grid place-content-center place-items-center">
-      <div className="flex gap-2 items-center flex-col">
-        <SearchAlert />
-        <p>
-          <span className="font-extrabold">404</span> | Page Not Found
-        </p>
-      </div>
-    </div>
+    <Box
+      sx={{
+        py: 20,
+        display: "grid",
+        placeContent: "center",
+        placeItems: "center"
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          alignItems: "center",
+          flexDirection: "column"
+        }}
+      >
+        <AlertTriangle />
+        <Typography variant="body1">Page Not Found</Typography>
+      </Box>
+    </Box>
   );
 }
 

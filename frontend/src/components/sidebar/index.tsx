@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import {
   File,
   MessagesSquare,
@@ -15,62 +15,77 @@ import NavItem from "./nav-item";
 const mainNavItems = [
   {
     text: "Specialists",
-    icon: <Tag />,
+    icon: <Tag size={20} />,
     href: "/specialists"
   },
   {
     text: "Clients",
-    icon: <Users />,
+    icon: <Users size={20} />,
     href: "/clients"
   },
   {
     text: "Service Orders",
-    icon: <File />,
+    icon: <File size={20} />,
     href: "/orders"
   },
   {
     text: "eSignature",
-    icon: <Pencil />,
+    icon: <Pencil size={20} />,
     href: "/e-signature"
   },
   {
     text: "Messages",
-    icon: <MessagesSquare />,
+    icon: <MessagesSquare size={20} />,
     href: "/messages"
   },
   {
     text: "Invoices & Receipts",
-    icon: <ScrollText />,
+    icon: <ScrollText size={20} />,
     href: "/invoices"
   }
 ];
 
 export function AppSidebar() {
   return (
-    <div className="w-70 bg-white px-2">
-      <div className="mt-10 flex justify-center">
-        <Link href="/">
-          <h2 className="text-2xl font-extrabold uppercase">Anycomp Clone</h2>
+    <Box sx={{ width: 280, bgcolor: "white", px: 2 }}>
+      <Box sx={{ mt: 10, display: "flex", justifyContent: "center" }}>
+        <Link href="/" style={{ textDecoration: "none" }}>
+          <Typography variant="h4">Anycomp Clone</Typography>
         </Link>
-      </div>
+      </Box>
       {/* Profile */}
-      <div className="mt-10 px-3">
-        <div className="mb-10 space-y-2">
-          <h2 className="text-lg font-semibold">Profile</h2>
-          <div className="flex items-center gap-3">
-            <Avatar />
-            <div>
-              <p className="text-sm">Gwen Lam</p>
-              <p className="text-xs">ST Comp Holdings Sdn Bhd</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Box sx={{ my: 10, px: 3 }}>
+        <Typography
+          variant="body1"
+          sx={{ fontSize: 18, mb: 2, fontWeight: 600 }}
+        >
+          Profile
+        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+          <Avatar />
+          <Box>
+            <Typography fontSize={16} variant="body1">
+              Gwen Lam
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ color: "primary.main", fontSize: 12, fontWeight: 600 }}
+            >
+              ST Comp Holdings Sdn Bhd
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
       {/* Nav menu */}
-      <div className="mb-4 px-3">
-        <p className="text-sm font-bold text-gray-500">Dashboard</p>
-      </div>
-      <div className="flex flex-col space-y-1">
+      <Box sx={{ mb: 4, px: 3 }}>
+        <Typography
+          variant="body1"
+          sx={{ fontSize: 14, fontWeight: 600, color: "gray" }}
+        >
+          Dashboard
+        </Typography>
+      </Box>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {mainNavItems.map((item, idx) => (
           <NavItem
             key={idx}
@@ -79,7 +94,7 @@ export function AppSidebar() {
             href={item.href}
           />
         ))}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
