@@ -50,7 +50,9 @@ export function AppSidebar() {
     <Box sx={{ width: 280, bgcolor: "white", px: 2 }}>
       <Box sx={{ mt: 10, display: "flex", justifyContent: "center" }}>
         <Link href="/" style={{ textDecoration: "none" }}>
-          <Typography variant="h4">Anycomp Clone</Typography>
+          <Typography sx={{ fontWeight: 600 }} variant="h4">
+            Anycomp Clone
+          </Typography>
         </Link>
       </Box>
       {/* Profile */}

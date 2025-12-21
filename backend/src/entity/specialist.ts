@@ -8,15 +8,15 @@ import {
 } from "typeorm";
 
 enum SpecialistVerificationStatus {
-  APPROVED,
-  UNDER_REVIEW,
-  REJECTED
+  APPROVED = "APPROVED",
+  UNDER_REVIEW = "UNDER_REVIEW",
+  REJECTED = "REJECTED"
 }
 
 @Entity("specialists")
 export class Specialist {
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column("varchar", { length: 255 })
   title: string;

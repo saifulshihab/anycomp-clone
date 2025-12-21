@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import { errorHandler, notFound } from "./middlewares/error-middleware";
 import router from "./routes/router";
@@ -12,6 +13,13 @@ process.on("unhandledRejection", (reason) => {
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Cors setup
+app.use(
+  cors({
+    origin: ["http://localhost:3000"]
+  })
+);
 
 // Routes
 app.get("/", (req, res) => {
