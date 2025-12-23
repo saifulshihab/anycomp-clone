@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { Box, Typography } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -14,17 +14,27 @@ function NavItem(props: Props) {
   const isActive = pathname === href;
   return (
     <Link href={href}>
-      <div
-        className={cn(
-          "flex items-center gap-3 rounded px-3 py-2 transition hover:bg-[#002F70] hover:text-white",
-          {
-            "bg-[#002F70] text-white": isActive
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 3,
+          borderRadius: 1,
+          px: 3,
+          py: 2,
+          color: isActive ? "white" : "inherit",
+          bgcolor: isActive ? "primary.main" : "inherit",
+          ":hover": {
+            bgcolor: "primary.main",
+            color: "white"
           }
-        )}
+        }}
       >
-        <div className="shrink-0">{icon}</div>
-        <span className="truncate text-sm font-medium">{text}</span>
-      </div>
+        <Box>{icon}</Box>
+        <Typography variant="body2" sx={{ fontSize: 14, fontWeight: 500 }}>
+          {text}
+        </Typography>
+      </Box>
     </Link>
   );
 }

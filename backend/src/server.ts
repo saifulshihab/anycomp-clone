@@ -18,7 +18,7 @@ const main = async () => {
 
   // Start the server
   app.listen(PORT, () => {
-    console.log(`🚀 Anycomp server running on port ${PORT}`);
+    console.log(`🚀 Anycomp Clone server running on port ${PORT}`);
   });
 };
 
