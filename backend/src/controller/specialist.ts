@@ -8,17 +8,25 @@ const SpecialistRepository = AppDataSource.getRepository(Specialist);
 export const getAllSpecialists = async (req: Request, res: Response) => {
   // Default values
   let pageNo = 1;
-  let pageSize = 2;
-  const search = req.query.search || "";
+  let pageSize = 10;
 
-  if (req.query?.page_number) pageNo = Number(req.query.page_number);
-  if (req.query?.page_size) pageSize = Number(req.query.page_size);
+  const search = req.query.search || "";
+  const is_draft = req.query.is_draft || "";
+
+  if (req.query.page_number) pageNo = Number(req.query.page_number);
+  if (req.query.page_size) pageSize = Number(req.query.page_size);
 
   const qb = SpecialistRepository.createQueryBuilder("specialist");
 
-  // Filter by search query
+  // Filtering & searching
+  if (is_draft) {
+    qb.where("(specialist.is_draft = :is_draft)", {
+      is_draft: is_draft === "true" ? true : false
+    });
+  }
+
   if (search) {
-    qb.where(search ? "(specialist.title ILIKE :search)" : "1=1", {
+    qb.andWhere("(specialist.title ILIKE :search)", {
       search: `%${search}%`
     });
   }
@@ -31,6 +39,7 @@ export const getAllSpecialists = async (req: Request, res: Response) => {
   res.json({
     count,
     data: specialists,
+    page: pageNo,
     totalPages: Math.ceil(count / pageSize)
   });
 };
@@ -40,6 +49,9 @@ export const getSpecialist = async (req: Request, res: Response) => {
   const specialist = await SpecialistRepository.findOne({
     where: { id: req.params.id as string }
   });
+  if (!specialist) {
+    return res.status(404).json({ message: "Item not found!" });
+  }
   res.json(specialist);
 };
 

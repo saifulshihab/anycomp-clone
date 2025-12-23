@@ -16,42 +16,52 @@ const mainNavItems = [
   {
     text: "Specialists",
     icon: <Tag size={20} />,
-    href: "/specialists"
+    href: "/dashboard/specialists"
   },
   {
     text: "Clients",
     icon: <Users size={20} />,
-    href: "/clients"
+    href: "/dashboard/clients"
   },
   {
     text: "Service Orders",
     icon: <File size={20} />,
-    href: "/orders"
+    href: "/dashboard/orders"
   },
   {
     text: "eSignature",
     icon: <Pencil size={20} />,
-    href: "/e-signature"
+    href: "/dashboard/e-signature"
   },
   {
     text: "Messages",
     icon: <MessagesSquare size={20} />,
-    href: "/messages"
+    href: "/dashboard/messages"
   },
   {
     text: "Invoices & Receipts",
     icon: <ScrollText size={20} />,
-    href: "/invoices"
+    href: "/dashboard/invoices"
   }
 ];
 
 export function AppSidebar() {
   return (
-    <Box sx={{ width: 280, bgcolor: "white", px: 2 }}>
-      <Box sx={{ mt: 10, display: "flex", justifyContent: "center" }}>
+    <Box sx={{ width: 280, bgcolor: "white" }}>
+      <Box
+        sx={{
+          px: 2,
+          height: "60px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          borderBottom: 1,
+          borderColor: "divider"
+        }}
+      >
         <Link href="/" style={{ textDecoration: "none" }}>
-          <Typography sx={{ fontWeight: 600 }} variant="h4">
-            Anycomp Clone
+          <Typography sx={{ fontWeight: 600 }} variant="h6">
+            ANYCOMP CLONE
           </Typography>
         </Link>
       </Box>
@@ -87,7 +97,7 @@ export function AppSidebar() {
           Dashboard
         </Typography>
       </Box>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, px: 3 }}>
         {mainNavItems.map((item, idx) => (
           <NavItem
             key={idx}

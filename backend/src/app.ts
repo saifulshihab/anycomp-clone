@@ -15,11 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Cors setup
-app.use(
-  cors({
-    origin: ["http://localhost:3000"]
-  })
-);
+app.use(cors());
 
 // Routes
 app.get("/", (req, res) => {

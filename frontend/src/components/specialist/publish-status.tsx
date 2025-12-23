@@ -12,7 +12,7 @@ function SpecialistPublishStatusBadge({ isDraft }: Props) {
         display: "inline-block",
         py: "2px",
         borderRadius: 2,
-        bgcolor: isDraft ? "#18C964" : "#C00306"
+        bgcolor: isDraft ? "#C00306" : "#18C964"
       }}
     >
       <Typography

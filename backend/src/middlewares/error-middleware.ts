@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { env } from "node:process";
+import { NextFunction, Request, Response } from "express";
+import { ENV_VARS } from "../config/constant";
 
 export const notFound = (req: Request, res: Response, next: NextFunction) => {
   const error = new Error(`Route not found - ${req.originalUrl}`);
@@ -21,7 +21,7 @@ export const errorHandler = (
 
   let errResponse;
 
-  if (env.ENV === "production") {
+  if (ENV_VARS.NODE_ENV === "production") {
     errResponse = {
       status: statusCode,
       message

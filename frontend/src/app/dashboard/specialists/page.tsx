@@ -1,9 +1,13 @@
 "use client";
 
-import { getAllSpecialistsApi } from "@/api/specialistApi";
+import { apiErrorHandler } from "@/api/apiErrorHandler";
+import {
+  getAllSpecialistsApi,
+  IGetAllSpecialistsResponse,
+  IIGetAllSpecialistsParams
+} from "@/api/specialistApi";
 import SpecialistPublishStatusBadge from "@/components/specialist/publish-status";
 import SpecialistVerificationStatusBadge from "@/components/specialist/verification-status";
-import { TSpecialist } from "@/types";
 import {
   Box,
   Button,
@@ -11,6 +15,7 @@ import {
   Input,
   Pagination,
   Paper,
+  Skeleton,
   Tab,
   Table,
   TableBody,
@@ -21,35 +26,49 @@ import {
   Tabs,
   Typography
 } from "@mui/material";
+import { AxiosError } from "axios";
 import { Download, EllipsisVertical, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 function Page() {
   const [filter, setFilter] = useState<"all" | "draft" | "published">("all");
-  const [specialists, setSpecialists] = useState<TSpecialist[]>([]);
-  const [totalPages, setTotalPages] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [specialistsResponse, setSpecialistsResponse] =
+    useState<IGetAllSpecialistsResponse>({
+      count: 0,
+      data: [],
+      page: 0,
+      totalPages: 0
+    });
 
-  const [queryParams, setQueryParams] = useState<{
-    pageSize?: number;
-    pageNumber?: number;
-  }>({
-    pageNumber: 1,
-    pageSize: 10
+  const [queryParams, setQueryParams] = useState<IIGetAllSpecialistsParams>({
+    page_number: 1,
+    page_size: 10
   });
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     (async () => {
-      const { data } = await getAllSpecialistsApi({
-        page_number: queryParams.pageNumber
-      });
-      setTotalPages(data.totalPages);
-      setSpecialists(data.data);
+      try {
+        setIsLoading(true);
+        const { data } = await getAllSpecialistsApi(queryParams);
+        setSpecialistsResponse(data);
+      } catch (err) {
+        apiErrorHandler(err as AxiosError);
+      } finally {
+        setIsLoading(false);
+      }
     })();
   }, [queryParams]);
 
+  const handleSearchText = useDebouncedCallback((value: string) => {
+    setQueryParams((prev) => ({ ...prev, page_number: 1, search: value }));
+  }, 1000);
+
   return (
     <Box>
-      <Box sx={{ marginY: 4 }}>
+      <Box sx={{ mb: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: 600 }}>
           Specialists
         </Typography>
@@ -59,7 +78,22 @@ function Page() {
       </Box>
 
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={filter} onChange={(_, value) => setFilter(value)}>
+        <Tabs
+          value={filter}
+          onChange={(_, value) => {
+            setFilter(value);
+            setQueryParams((prev) => ({
+              ...prev,
+              page_number: 1,
+              is_draft:
+                value === "all"
+                  ? undefined
+                  : value === "draft"
+                  ? "true"
+                  : "false"
+            }));
+          }}
+        >
           <Tab label="All" value="all" />
           <Tab label="Drafts" value="draft" />
           <Tab label="Published" value="published" />
@@ -76,7 +110,15 @@ function Page() {
         }}
       >
         <Box>
-          <Input placeholder="Search services" />
+          <Input
+            placeholder="Search services"
+            value={searchText}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearchText(value);
+              handleSearchText(value);
+            }}
+          />
         </Box>
         <Box
           sx={{
@@ -98,8 +140,8 @@ function Page() {
           </Button>
         </Box>
       </Box>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <TableContainer component={Paper} sx={{ maxHeight: "60vh" }}>
+        <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow sx={{ textTransform: "uppercase" }}>
               <TableCell sx={{ fontWeight: 600, color: "#888888" }}>
@@ -144,8 +186,18 @@ function Page() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {specialists.length ? (
-              specialists.map((specialist) => (
+            {isLoading ? (
+              Array(4)
+                .fill(0)
+                .map((_, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell colSpan={7}>
+                      <Skeleton variant="rounded" width="100%" height={30} />
+                    </TableCell>
+                  </TableRow>
+                ))
+            ) : specialistsResponse.data.length ? (
+              specialistsResponse.data.map((specialist) => (
                 <TableRow
                   key={specialist.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -198,10 +250,10 @@ function Page() {
       </TableContainer>
       <Box sx={{ my: 4, display: "flex", justifyContent: "center" }}>
         <Pagination
-          page={queryParams.pageNumber}
-          count={totalPages}
+          page={queryParams.page_number}
+          count={specialistsResponse.totalPages}
           onChange={(_, page) =>
-            setQueryParams((prev) => ({ ...prev, pageNumber: page }))
+            setQueryParams((prev) => ({ ...prev, page_number: page }))
           }
         />
       </Box>
