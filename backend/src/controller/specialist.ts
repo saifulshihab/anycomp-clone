@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/data-source";
+import { Media, MediaType } from "../entity/media";
 import { Specialist } from "../entity/specialist";
 
 const SpecialistRepository = AppDataSource.getRepository(Specialist);
+const MediaRepository = AppDataSource.getRepository(Media);
 
 // Get all specialists
 export const getAllSpecialists = async (req: Request, res: Response) => {
@@ -58,8 +60,30 @@ export const getSpecialist = async (req: Request, res: Response) => {
 // Create a specialist
 export const createSpecialist = async (req: Request, res: Response) => {
   const specialist = SpecialistRepository.create(req.body);
-  const result = await SpecialistRepository.save(specialist);
-  res.status(201).json(result);
+  const savedSpecialist = await SpecialistRepository.save(specialist);
+  res.status(201).json(savedSpecialist);
+};
+
+// Upload media for a specialist
+export const uploadSpecialistMedia = async (req: Request, res: Response) => {
+  const specialistId = req.params.id as string;
+
+  if (req.files && req.files.length) {
+    // Upload media files
+    for (const file of req.files as Express.Multer.File[]) {
+      const media = MediaRepository.create({
+        file_name: file.filename,
+        file_size: file.size,
+        display_order: 1,
+        media_type: MediaType.AUDIO,
+        mime_type: file.mimetype,
+        specialists: specialistId
+      } as any);
+      await MediaRepository.save(media);
+    }
+  }
+
+  res.json({ message: "Media uploaded successfully." });
 };
 
 // Edit specialist

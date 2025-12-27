@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
+import { cn } from "../../../utils";
 
 type Props = {
   isDraft: boolean;
@@ -6,14 +7,11 @@ type Props = {
 
 function SpecialistPublishStatusBadge({ isDraft }: Props) {
   return (
-    <Box
-      sx={{
-        px: 2,
-        display: "inline-block",
-        py: "2px",
-        borderRadius: 2,
-        bgcolor: isDraft ? "#C00306" : "#18C964"
-      }}
+    <div
+      className={cn(
+        "py-.5 inline-block rounded-lg px-2",
+        isDraft ? "bg-[#C00306]" : "bg-[#18C964]"
+      )}
     >
       <Typography
         variant="body2"
@@ -25,7 +23,7 @@ function SpecialistPublishStatusBadge({ isDraft }: Props) {
       >
         {isDraft ? "Not Published" : "Published"}
       </Typography>
-    </Box>
+    </div>
   );
 }
 

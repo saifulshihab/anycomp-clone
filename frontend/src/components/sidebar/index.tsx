@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 import {
   File,
   MessagesSquare,
@@ -47,35 +47,25 @@ const mainNavItems = [
 
 export function AppSidebar() {
   return (
-    <Box sx={{ width: 280, bgcolor: "white" }}>
-      <Box
-        sx={{
-          px: 2,
-          height: "60px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          borderBottom: 1,
-          borderColor: "divider"
-        }}
-      >
+    <div className="w-70 bg-white">
+      <div className="flex h-15 items-center justify-center border-b border-gray-300 px-2">
         <Link href="/" style={{ textDecoration: "none" }}>
           <Typography sx={{ fontWeight: 600 }} variant="h6">
             ANYCOMP CLONE
           </Typography>
         </Link>
-      </Box>
+      </div>
       {/* Profile */}
-      <Box sx={{ my: 10, px: 3 }}>
+      <div className="my-10 px-3">
         <Typography
           variant="body1"
           sx={{ fontSize: 18, mb: 2, fontWeight: 600 }}
         >
           Profile
         </Typography>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+        <div className="flex items-center gap-3">
           <Avatar />
-          <Box>
+          <div>
             <Typography fontSize={16} variant="body1">
               Gwen Lam
             </Typography>
@@ -85,19 +75,19 @@ export function AppSidebar() {
             >
               ST Comp Holdings Sdn Bhd
             </Typography>
-          </Box>
-        </Box>
-      </Box>
+          </div>
+        </div>
+      </div>
       {/* Nav menu */}
-      <Box sx={{ mb: 4, px: 3 }}>
+      <div className="mb-4 px-3">
         <Typography
           variant="body1"
           sx={{ fontSize: 14, fontWeight: 600, color: "gray" }}
         >
           Dashboard
         </Typography>
-      </Box>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, px: 3 }}>
+      </div>
+      <div className="flex flex-col gap-1 px-3">
         {mainNavItems.map((item, idx) => (
           <NavItem
             key={idx}
@@ -106,7 +96,7 @@ export function AppSidebar() {
             href={item.href}
           />
         ))}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }

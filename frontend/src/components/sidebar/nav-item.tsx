@@ -1,6 +1,7 @@
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { cn } from "../../../utils";
 
 type Props = {
   icon: React.ReactNode;
@@ -14,27 +15,22 @@ function NavItem(props: Props) {
   const isActive = pathname === href;
   return (
     <Link href={href}>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 3,
-          borderRadius: 1,
-          px: 3,
-          py: 2,
-          color: isActive ? "white" : "inherit",
-          bgcolor: isActive ? "primary.main" : "inherit",
-          ":hover": {
-            bgcolor: "primary.main",
-            color: "white"
+      <div
+        className={cn(
+          "hover:bg-primary flex items-center gap-3 rounded-sm px-3 py-2 transition-all hover:text-white",
+          {
+            "text-white": isActive,
+            "text-inherit": !isActive,
+            "bg-primary": isActive,
+            "bg-inherit": !isActive
           }
-        }}
+        )}
       >
-        <Box>{icon}</Box>
+        <div>{icon}</div>
         <Typography variant="body2" sx={{ fontSize: 14, fontWeight: 500 }}>
           {text}
         </Typography>
-      </Box>
+      </div>
     </Link>
   );
 }

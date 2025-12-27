@@ -1,5 +1,5 @@
 import { SpecialistVerificationStatus } from "@/types";
-import { Box, Typography } from "@mui/material";
+import { cn } from "../../../utils";
 
 type Props = {
   status: SpecialistVerificationStatus | undefined;
@@ -7,40 +7,24 @@ type Props = {
 
 function SpecialistVerificationStatusBadge({ status }: Props) {
   return status && status.length ? (
-    <Box
-      sx={{
-        px: 2,
-        display: "inline-block",
-        py: "2px",
-        borderRadius: 2,
-        bgcolor:
-          status === SpecialistVerificationStatus.APPROVED
-            ? "#18C96466"
-            : status === SpecialistVerificationStatus.UNDER_REVIEW
-            ? "#61E7DA66"
-            : status === SpecialistVerificationStatus.REJECTED
-            ? "#C0030666"
-            : ""
-      }}
+    <div
+      className={cn("inline-block rounded-lg px-2 py-0.5", {
+        "bg-[#18C96466]": status === SpecialistVerificationStatus.APPROVED,
+        "bg-[#61E7DA66]": status === SpecialistVerificationStatus.UNDER_REVIEW,
+        "bg-[#C0030666]": status === SpecialistVerificationStatus.REJECTED
+      })}
     >
-      <Typography
-        variant="body2"
-        sx={{
-          fontSize: 12,
-          fontWeight: 500,
-          color:
-            status === SpecialistVerificationStatus.APPROVED
-              ? "#18C964"
-              : status === SpecialistVerificationStatus.UNDER_REVIEW
-              ? "#61E7DA"
-              : status === SpecialistVerificationStatus.REJECTED
-              ? "#C00306"
-              : ""
-        }}
+      <span
+        className={cn("text-xs font-semibold", {
+          "text-[#18C964]": status === SpecialistVerificationStatus.APPROVED,
+          "text-[#61E7DA]":
+            status === SpecialistVerificationStatus.UNDER_REVIEW,
+          "text-[#C00306]": status === SpecialistVerificationStatus.REJECTED
+        })}
       >
         {status[0].toUpperCase() + status.substring(1).toLowerCase()}
-      </Typography>
-    </Box>
+      </span>
+    </div>
   ) : null;
 }
 

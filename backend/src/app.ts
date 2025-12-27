@@ -6,8 +6,13 @@ import router from "./routes/router";
 const app = express();
 
 process.on("unhandledRejection", (reason) => {
-  const error = new Error(`Unhandled rejection. Reason: ${reason}`);
-  throw error;
+  console.log(`Unhandled rejection. Reason: ${reason}`);
+  process.exit(1);
+});
+
+process.on("uncaughtException", (err) => {
+  console.log("Uncaught exception", err);
+  process.exit(1);
 });
 
 // Middlewares
@@ -23,6 +28,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", router);
+
+// Serve static files from the "uploads" directory
+app.use("/uploads", express.static("uploads"));
 
 // 404 handler
 app.use(notFound);

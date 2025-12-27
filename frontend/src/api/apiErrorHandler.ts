@@ -17,6 +17,7 @@ export enum HTTPResponseStatusCode {
 }
 
 const defaultApiErrorMessage = "Something going wrong!";
+
 const showToast = (msg: string, type?: any, options?: any) => {
   console.log(msg);
 };

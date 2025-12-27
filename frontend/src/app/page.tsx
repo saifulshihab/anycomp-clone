@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Container,
   FormControl,
@@ -14,8 +13,8 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <Box>
-      <Box sx={{ border: 1, borderColor: "divider" }}>
+    <div>
+      <div className="border border-gray-300">
         <Container
           sx={{
             display: "flex",
@@ -24,30 +23,30 @@ export default function Home() {
             gap: 4
           }}
         >
-          <Box sx={{ py: 4 }}>
+          <div className="py-4">
             <Typography variant="h6" align="center" fontWeight={600}>
               Anycomp Clone
             </Typography>
-          </Box>
+          </div>
           <Link href="/dashboard">
             <Button variant="contained">Go To Dashboard</Button>
           </Link>
         </Container>
-      </Box>
+      </div>
       {/* Specialist */}
-      <Box>
+      <div>
         <Container>
           {/* Heading */}
-          <Box sx={{ my: 4 }}>
+          <div className="my-4">
             <Typography variant="h5" sx={{ fontWeight: 600 }}>
               Register a New Company
             </Typography>
             <Typography variant="body2" color="#888">
               Get Your Company Registered with a Trusted Specialists
             </Typography>
-          </Box>
+          </div>
           {/* Filters */}
-          <Box sx={{ display: "flex", gap: 3 }}>
+          <div className="flex gap-3">
             <FormControl sx={{ minWidth: 120 }}>
               <InputLabel size="small" id="price-select-label">
                 Price
@@ -78,35 +77,30 @@ export default function Home() {
                 <MenuItem value={30}>Thirty</MenuItem>
               </Select>
             </FormControl>
-          </Box>
+          </div>
           {/* Specialists */}
           <Grid container spacing={6} sx={{ my: 4 }}>
             {Array(4)
               .fill(0)
               .map((_, idx) => (
                 <Grid key={idx} size={4}>
-                  <Box>
-                    <Box
-                      sx={{
-                        position: "relative",
-                        height: 220
-                      }}
-                    >
+                  <div>
+                    <div className="relative h-55">
                       <Image fill alt="logo" src="/images/logo.png" />
-                    </Box>
-                    <Box>
+                    </div>
+                    <div>
                       <Typography variant="body1">Adam Low</Typography>
                       <Typography variant="body2">
                         Register your Company with the best Company Secretary in
                         KL
                       </Typography>
-                    </Box>
-                  </Box>
+                    </div>
+                  </div>
                 </Grid>
               ))}
           </Grid>
         </Container>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }

@@ -9,12 +9,12 @@ import {
 } from "typeorm";
 import { Specialist } from "./specialist";
 
-enum MediaType {
+export enum MediaType {
   AUDIO = "audio",
   VIDEO = "video"
 }
 
-enum MimeType {
+export enum MimeType {
   IMAGE_JPEG = "image/jpeg",
   IMAGE_PNG = "image/png",
   IMAGE_WEBP = "image/webp"

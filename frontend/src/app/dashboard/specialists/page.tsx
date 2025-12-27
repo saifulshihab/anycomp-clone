@@ -9,7 +9,6 @@ import {
 import SpecialistPublishStatusBadge from "@/components/specialist/publish-status";
 import SpecialistVerificationStatusBadge from "@/components/specialist/verification-status";
 import {
-  Box,
   Button,
   IconButton,
   Input,
@@ -28,12 +27,13 @@ import {
 } from "@mui/material";
 import { AxiosError } from "axios";
 import { Download, EllipsisVertical, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 function Page() {
   const [filter, setFilter] = useState<"all" | "draft" | "published">("all");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [specialistsResponse, setSpecialistsResponse] =
     useState<IGetAllSpecialistsResponse>({
       count: 0,
@@ -48,10 +48,10 @@ function Page() {
   });
   const [searchText, setSearchText] = useState("");
 
-  useEffect(() => {
-    (async () => {
+  const getAllSpecialists = useCallback(
+    async (isLoading?: boolean) => {
       try {
-        setIsLoading(true);
+        if (isLoading) setIsLoading(true);
         const { data } = await getAllSpecialistsApi(queryParams);
         setSpecialistsResponse(data);
       } catch (err) {
@@ -59,25 +59,30 @@ function Page() {
       } finally {
         setIsLoading(false);
       }
-    })();
-  }, [queryParams]);
+    },
+    [queryParams]
+  );
+
+  useEffect(() => {
+    getAllSpecialists(true);
+  }, [getAllSpecialists]);
 
   const handleSearchText = useDebouncedCallback((value: string) => {
     setQueryParams((prev) => ({ ...prev, page_number: 1, search: value }));
   }, 1000);
 
   return (
-    <Box>
-      <Box sx={{ mb: 4 }}>
+    <div>
+      <div className="mb-4">
         <Typography variant="h4" sx={{ fontWeight: 600 }}>
           Specialists
         </Typography>
         <Typography variant="body2" color="#888">
           Create and publish your services for Client&apos;s & Companies
         </Typography>
-      </Box>
+      </div>
 
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+      <div className="border-b border-gray-300">
         <Tabs
           value={filter}
           onChange={(_, value) => {
@@ -89,8 +94,8 @@ function Page() {
                 value === "all"
                   ? undefined
                   : value === "draft"
-                  ? "true"
-                  : "false"
+                    ? "true"
+                    : "false"
             }));
           }}
         >
@@ -98,18 +103,9 @@ function Page() {
           <Tab label="Drafts" value="draft" />
           <Tab label="Published" value="published" />
         </Tabs>
-      </Box>
-
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          my: 5,
-          gap: 3,
-          justifyContent: "space-between"
-        }}
-      >
-        <Box>
+      </div>
+      <div className="my-5 flex items-center justify-between gap-3">
+        <div>
           <Input
             placeholder="Search services"
             value={searchText}
@@ -119,18 +115,13 @@ function Page() {
               handleSearchText(value);
             }}
           />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            my: 5,
-            gap: 3,
-            justifyContent: "space-between"
-          }}
-        >
-          <Button variant="contained" startIcon={<Plus size={16} />}>
-            Create
-          </Button>
+        </div>
+        <div className="my-5 flex justify-between gap-3">
+          <Link href="/dashboard/specialists/create">
+            <Button variant="contained" startIcon={<Plus size={16} />}>
+              Create
+            </Button>
+          </Link>
           <Button
             sx={{ bgcolor: "primary.dark", color: "white" }}
             variant="outlined"
@@ -138,8 +129,8 @@ function Page() {
           >
             Export
           </Button>
-        </Box>
-      </Box>
+        </div>
+      </div>
       <TableContainer component={Paper} sx={{ maxHeight: "60vh" }}>
         <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -232,23 +223,16 @@ function Page() {
             ) : (
               <TableRow>
                 <TableCell colSpan={7}>
-                  <Box
-                    sx={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center"
-                    }}
-                  >
+                  <div className="flex w-full items-center justify-center">
                     No Data
-                  </Box>
+                  </div>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </TableContainer>
-      <Box sx={{ my: 4, display: "flex", justifyContent: "center" }}>
+      <div className="my-4 flex justify-center">
         <Pagination
           page={queryParams.page_number}
           count={specialistsResponse.totalPages}
@@ -256,8 +240,8 @@ function Page() {
             setQueryParams((prev) => ({ ...prev, page_number: page }))
           }
         />
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
 

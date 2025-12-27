@@ -1,8 +1,10 @@
 import express from "express";
+import { upload } from "../config/upload";
 import {
   createSpecialist,
   getAllSpecialists,
-  getSpecialist
+  getSpecialist,
+  uploadSpecialistMedia
 } from "../controller/specialist";
 import inputValidator from "../validators/input-validator";
 import {
@@ -24,5 +26,12 @@ router
 router
   .route("/:id")
   .get(inputValidator(null, SpecialistIdParamSchema), getSpecialist);
+
+router.post(
+  "/media/:id",
+  inputValidator(null, SpecialistIdParamSchema),
+  upload.array("media", 3),
+  uploadSpecialistMedia
+);
 
 export default router;

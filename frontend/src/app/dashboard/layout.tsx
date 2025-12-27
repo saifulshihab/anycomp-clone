@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/sidebar";
-import { Avatar, Box, IconButton } from "@mui/material";
+import { Avatar, IconButton } from "@mui/material";
 import { Bell, MessageSquareIcon } from "lucide-react";
 
 export default function Layout({
@@ -8,22 +8,11 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+    <div className="flex min-h-screen">
       <AppSidebar />
-      <Box sx={{ flex: 1, bgcolor: "#F8F7FA" }}>
-        <Box
-          sx={{
-            px: 10,
-            height: 60,
-            bgcolor: "white",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "end",
-            borderBottom: 1,
-            borderColor: "divider"
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+      <div className="flex-1 bg-[#F8F7FA]">
+        <div className="flex h-15 items-center justify-end border-b border-gray-300 px-10">
+          <div className="flex items-center gap-3">
             <IconButton>
               <MessageSquareIcon size={18} />
             </IconButton>
@@ -31,10 +20,10 @@ export default function Layout({
               <Bell size={18} />
             </IconButton>
             <Avatar />
-          </Box>
-        </Box>
-        <Box sx={{ p: 6 }}>{children}</Box>
-      </Box>
-    </Box>
+          </div>
+        </div>
+        <div className="p-6">{children}</div>
+      </div>
+    </div>
   );
 }
