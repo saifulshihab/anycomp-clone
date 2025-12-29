@@ -2,19 +2,26 @@
 
 import { apiErrorHandler } from "@/api/apiErrorHandler";
 import {
+  deleteSpecialistApi,
   getAllSpecialistsApi,
   IGetAllSpecialistsResponse,
   IIGetAllSpecialistsParams
 } from "@/api/specialistApi";
+import ActionMenu from "@/components/specialist/create/action-menu";
 import SpecialistPublishStatusBadge from "@/components/specialist/publish-status";
 import SpecialistVerificationStatusBadge from "@/components/specialist/verification-status";
 import {
   Button,
-  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Input,
   Pagination,
   Paper,
   Skeleton,
+  styled,
   Tab,
   Table,
   TableBody,
@@ -26,14 +33,26 @@ import {
   Typography
 } from "@mui/material";
 import { AxiosError } from "axios";
-import { Download, EllipsisVertical, Plus } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useDebouncedCallback } from "use-debounce";
 
+const StyledTableCell = styled(TableCell)({
+  fontWeight: 600,
+  color: "#888888"
+});
+
 function Page() {
+  const router = useRouter();
   const [filter, setFilter] = useState<"all" | "draft" | "published">("all");
   const [isLoading, setIsLoading] = useState(true);
+
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteDialogId, setDeleteDialogId] = useState<string | undefined>();
+
   const [specialistsResponse, setSpecialistsResponse] =
     useState<IGetAllSpecialistsResponse>({
       count: 0,
@@ -42,11 +61,11 @@ function Page() {
       totalPages: 0
     });
 
+  const [searchText, setSearchText] = useState("");
   const [queryParams, setQueryParams] = useState<IIGetAllSpecialistsParams>({
     page_number: 1,
     page_size: 10
   });
-  const [searchText, setSearchText] = useState("");
 
   const getAllSpecialists = useCallback(
     async (isLoading?: boolean) => {
@@ -67,6 +86,21 @@ function Page() {
     getAllSpecialists(true);
   }, [getAllSpecialists]);
 
+  const onDelete = async () => {
+    try {
+      if (!deleteDialogId) return;
+      setIsDeleting(true);
+      await deleteSpecialistApi(deleteDialogId);
+      await getAllSpecialists();
+      setDeleteDialogId(undefined);
+      toast.success("Specialist deleted.");
+    } catch (err) {
+      apiErrorHandler(err as AxiosError);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const handleSearchText = useDebouncedCallback((value: string) => {
     setQueryParams((prev) => ({ ...prev, page_number: 1, search: value }));
   }, 1000);
@@ -81,7 +115,6 @@ function Page() {
           Create and publish your services for Client&apos;s & Companies
         </Typography>
       </div>
-
       <div className="border-b border-gray-300">
         <Tabs
           value={filter}
@@ -132,48 +165,20 @@ function Page() {
         </div>
       </div>
       <TableContainer component={Paper} sx={{ maxHeight: "60vh" }}>
-        <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table
+          stickyHeader
+          sx={{ minWidth: 650 }}
+          aria-label="specialists table"
+        >
           <TableHead>
             <TableRow sx={{ textTransform: "uppercase" }}>
-              <TableCell sx={{ fontWeight: 600, color: "#888888" }}>
-                Service
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: 600, color: "#888888" }}
-              >
-                Price
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: 600, color: "#888888" }}
-              >
-                Rating
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: 600, color: "#888888" }}
-              >
-                Duration
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: 600, color: "#888888" }}
-              >
-                Approval Status
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: 600, color: "#888888" }}
-              >
-                Publish Status
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ fontWeight: 600, color: "#888888" }}
-              >
-                Action
-              </TableCell>
+              <StyledTableCell>Service</StyledTableCell>
+              <StyledTableCell align="center">Price</StyledTableCell>
+              <StyledTableCell align="center">Rating</StyledTableCell>
+              <StyledTableCell align="center">Duration</StyledTableCell>
+              <StyledTableCell align="center">Approval Status</StyledTableCell>
+              <StyledTableCell align="center">Publish Status</StyledTableCell>
+              <StyledTableCell align="center">Action</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -214,9 +219,12 @@ function Page() {
                     />
                   </TableCell>
                   <TableCell align="center">
-                    <IconButton>
-                      <EllipsisVertical size={16} />
-                    </IconButton>
+                    <ActionMenu
+                      onView={() =>
+                        router.push(`/dashboard/specialists/${specialist.id}`)
+                      }
+                      onDelete={() => setDeleteDialogId(specialist.id)}
+                    />
                   </TableCell>
                 </TableRow>
               ))
@@ -241,6 +249,36 @@ function Page() {
           }
         />
       </div>
+      <Dialog
+        open={deleteDialogId !== undefined}
+        onClose={() => setDeleteDialogId(undefined)}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">Delete Specialist</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want delete this specialist?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="outlined"
+            disabled={isDeleting}
+            onClick={() => setDeleteDialogId(undefined)}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="error"
+            variant="contained"
+            loading={isDeleting}
+            onClick={onDelete}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

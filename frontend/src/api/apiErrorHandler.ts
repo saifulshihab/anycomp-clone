@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
 import { AxiosError, AxiosResponse } from "axios";
+import toast from "react-hot-toast";
 
 export type TCommonApiErrorAttr = {
   err?: string;
@@ -17,10 +17,6 @@ export enum HTTPResponseStatusCode {
 }
 
 const defaultApiErrorMessage = "Something going wrong!";
-
-const showToast = (msg: string, type?: any, options?: any) => {
-  console.log(msg);
-};
 
 export function apiErrorHandler(
   error: AxiosError,
@@ -41,11 +37,7 @@ export function apiErrorHandler(
 
     // error message from common attributes
     let errorMessage =
-      responseData?.err ||
-      responseData?.msg ||
-      responseData?.error ||
-      responseData?.message;
-
+      responseData?.message || responseData?.err || responseData?.msg;
     /**
      * common attr message not found
      * get error message from custom attribute if provided
@@ -78,19 +70,19 @@ export function apiErrorHandler(
       error.response.status === HTTPResponseStatusCode.Unauthorized
         ? "Your session has expired. Please log in again to continue."
         : error.response.status === HTTPResponseStatusCode.Forbidden
-        ? "You don't have access rights to the content."
-        : defaultApiErrorMessage;
+          ? "You don't have access rights to the content."
+          : defaultApiErrorMessage;
 
     // show the error message
     if (shouldShowToast) {
-      showToast(errorMessage || defaultErrorMessage, "error", {
+      toast.error(errorMessage || defaultErrorMessage, {
         duration:
           error.response.status >= HTTPResponseStatusCode.BadRequest
             ? 5000
             : undefined
       });
     }
-    console.error(`${error.response.status} ${error.response.statusText}`);
+    // console.error(`${error.response.status} ${error.response.statusText}`);
 
     /**
      * logout the user
@@ -102,14 +94,14 @@ export function apiErrorHandler(
     return { status: error.response.status, data: responseData };
   } else if (error?.request) {
     // the request was made but no response was received, set a default status for client side
-    if (shouldShowToast) showToast(defaultApiErrorMessage, "error");
+    if (shouldShowToast) toast.error(defaultApiErrorMessage);
     return {
       status: HTTPResponseStatusCode.InternalServerError,
       data: undefined
     };
   } else {
     // something happened in setting up the request that triggered an Error
-    if (shouldShowToast) showToast(defaultApiErrorMessage, "error");
+    if (shouldShowToast) toast.error(defaultApiErrorMessage);
     return {
       status: HTTPResponseStatusCode.InternalServerError,
       data: undefined

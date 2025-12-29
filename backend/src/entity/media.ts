@@ -10,6 +10,7 @@ import {
 import { Specialist } from "./specialist";
 
 export enum MediaType {
+  IMAGE = "image",
   AUDIO = "audio",
   VIDEO = "video"
 }
@@ -29,7 +30,7 @@ export class Media {
   file_name: string;
 
   @Column("int", { default: 0 })
-  file_size: string;
+  file_size: number;
 
   @Column("int", { default: 0 })
   display_order: number;
@@ -40,6 +41,11 @@ export class Media {
   @Column("enum", { enum: MediaType, nullable: true })
   media_type: MediaType;
 
+  @ManyToOne(() => Specialist, (specialist) => specialist.media, {
+    onDelete: "CASCADE"
+  })
+  specialists: Specialist;
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -48,7 +54,4 @@ export class Media {
 
   @DeleteDateColumn()
   deleted_at: Date;
-
-  @ManyToOne(() => Specialist, (specialist) => specialist.id)
-  specialists: Specialist[];
 }

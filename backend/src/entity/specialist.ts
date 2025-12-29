@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
+import { Media } from "./media";
+import { ServiceOffer } from "./service-offer";
 
 enum SpecialistVerificationStatus {
   APPROVED = "APPROVED",
@@ -27,32 +30,43 @@ export class Specialist {
   @Column("varchar", { length: 1200 })
   description: string;
 
-  @Column("decimal", { default: 0 })
+  @Column("decimal", { default: 0, precision: 5, scale: 2 })
   average_rating: number;
 
   @Column("int", { default: 0 })
   total_number_of_ratings: number;
 
-  @Column("decimal", { default: 0 })
+  @Column("decimal", { default: 0, precision: 10, scale: 2 })
   base_price: number;
 
-  @Column("decimal", { default: 0 })
+  @Column("decimal", { default: 0, precision: 10, scale: 2 })
   platform_fee: number;
 
-  @Column("decimal", { default: 0 })
+  @Column("decimal", { default: 0, precision: 10, scale: 2 })
   final_price: number;
 
   @Column("int", { default: 0 })
   duration_days: number;
 
-  @Column("boolean", { default: false })
+  @Column("boolean", { default: true })
   is_draft: boolean;
 
-  @Column("enum", { enum: SpecialistVerificationStatus, nullable: true })
+  @Column("enum", {
+    enum: SpecialistVerificationStatus,
+    default: SpecialistVerificationStatus.UNDER_REVIEW
+  })
   verification_status: SpecialistVerificationStatus;
 
   @Column("boolean", { default: false })
   is_verified: boolean;
+
+  @OneToMany(() => Media, (media) => media.specialists, { cascade: true })
+  media: Media[];
+
+  @OneToMany(() => ServiceOffer, (offer) => offer.specialists, {
+    cascade: true
+  })
+  service_offerings: ServiceOffer[];
 
   @CreateDateColumn()
   created_at: Date;

@@ -3,6 +3,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 import type { Metadata } from "next";
 import { Red_Hat_Display } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const redHatDisplay = Red_Hat_Display({
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className={`${redHatDisplay.className}`} suppressHydrationWarning>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          <Toaster />
         </AppRouterCacheProvider>
       </body>
     </html>

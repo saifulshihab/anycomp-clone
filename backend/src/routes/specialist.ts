@@ -2,15 +2,18 @@ import express from "express";
 import { upload } from "../config/upload";
 import {
   createSpecialist,
+  deleteSpecialist,
   getAllSpecialists,
   getSpecialist,
+  publishSpecialist,
   uploadSpecialistMedia
 } from "../controller/specialist";
+import { UUIDParamSchema } from "../validators";
 import inputValidator from "../validators/input-validator";
 import {
   GetAllSpecialistsQueryParamsSchema,
-  SpecialistIdParamSchema,
-  SpecialistSchema
+  SpecialistSchema,
+  UploadSpecialistMediaQueryParamsSchema
 } from "../validators/specialist-validator";
 
 const router = express.Router();
@@ -25,13 +28,20 @@ router
 
 router
   .route("/:id")
-  .get(inputValidator(null, SpecialistIdParamSchema), getSpecialist);
+  .get(inputValidator(null, UUIDParamSchema), getSpecialist)
+  .delete(inputValidator(null, UUIDParamSchema), deleteSpecialist);
 
 router.post(
   "/media/:id",
-  inputValidator(null, SpecialistIdParamSchema),
-  upload.array("media", 3),
+  inputValidator(null, UUIDParamSchema, UploadSpecialistMediaQueryParamsSchema),
+  upload.array("files", 3),
   uploadSpecialistMedia
+);
+
+router.patch(
+  "/:id/publish",
+  inputValidator(null, UUIDParamSchema),
+  publishSpecialist
 );
 
 export default router;

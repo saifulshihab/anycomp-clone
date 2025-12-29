@@ -1,15 +1,32 @@
 "use client";
 
 import { apiErrorHandler } from "@/api/apiErrorHandler";
-import { getAllSpecialistsApi } from "@/api/specialistApi";
+import {
+  createSpecialistApi,
+  getAllSpecialistsApi,
+  publishSpecialistApi,
+  uploadSpecialistMediaApi
+} from "@/api/specialistApi";
 import SpecialistEditDrawer from "@/components/specialist/create/edit-drawer";
-import { TSpecialist } from "@/types";
-import { ISpecialistInput } from "@/types/specialist";
-import { Button, Divider, Grid, Typography } from "@mui/material";
+import { ISpecialist, ISpecialistInput } from "@/types/specialist";
+import { specialistValidator } from "@/validators/specialist-validator";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Grid,
+  Typography
+} from "@mui/material";
 import { AxiosError } from "axios";
 import { ImageUp } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const ImageUploadBoxPlaceholder = () => {
   return (
@@ -33,22 +50,33 @@ export interface IMediaFiles {
   media3: IMediaFile;
 }
 
+const initialSpecialistInput = {
+  title: undefined,
+  description: undefined,
+  duration_days: undefined,
+  base_price: undefined,
+  platform_fee: undefined,
+  final_price: undefined,
+  service_offerings: []
+};
+
 export default function Page() {
+  const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [specialistInput, setSpecialistInput] = useState<ISpecialistInput>({
-    title: "",
-    description: "",
-    duration_days: undefined,
-    base_price: undefined,
-    platform_fee: undefined,
-    final_price: undefined
-  });
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [specialistInput, setSpecialistInput] = useState<ISpecialistInput>(
+    initialSpecialistInput
+  );
+  const [formErrors, setFormErrors] = useState<any>();
   const [mediaFiles, setMediaFiles] = useState<IMediaFiles>({
     media1: { previewUrl: "", file: null as unknown as File },
     media2: { previewUrl: "", file: null as unknown as File },
     media3: { previewUrl: "", file: null as unknown as File }
   });
-  const [specialists, setSpecialists] = useState<TSpecialist[]>([]);
+  const [specialists, setSpecialists] = useState<ISpecialist[]>([]);
+  const [isPublishDialogOpen, setPublishConfirmationDialogOpen] =
+    useState(false);
 
   const getAllSpecialists = useCallback(async () => {
     try {
@@ -56,7 +84,6 @@ export default function Page() {
       setSpecialists(data.data);
     } catch (err) {
       apiErrorHandler(err as AxiosError);
-    } finally {
     }
   }, []);
 
@@ -69,6 +96,10 @@ export default function Page() {
       ...prev,
       [key]: value
     }));
+    setFormErrors((prev: any) => ({
+      ...prev,
+      [key]: null
+    }));
   };
 
   const handleFileChange = (
@@ -77,6 +108,7 @@ export default function Page() {
   ) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
+
     setMediaFiles(
       (prev) =>
         ({
@@ -107,6 +139,76 @@ export default function Page() {
     specialistInput.platform_fee !== undefined
       ? Number(specialistInput.base_price + specialistInput.platform_fee)
       : 0;
+
+  const handlePublishConfirmationDialogClose = () => {
+    setPublishConfirmationDialogOpen(false);
+  };
+
+  const onPublish = async () => {
+    try {
+      setIsSaving(true);
+
+      // Create specialist first
+      const { data } = await createSpecialistApi(specialistInput);
+      const specialistId = data.id;
+
+      // Upload specialist media
+      const formData = new FormData();
+      const display_order: any = {};
+
+      if (mediaFiles.media1.file) {
+        formData.append("files", mediaFiles.media1.file);
+        display_order[`${mediaFiles.media1.file.name}`] = 1;
+      }
+
+      if (mediaFiles.media2.file) {
+        display_order[`${mediaFiles.media2.file.name}`] = 2;
+        formData.append("files", mediaFiles.media2.file);
+      }
+
+      if (mediaFiles.media3.file) {
+        display_order[`${mediaFiles.media3.file.name}`] = 3;
+        formData.append("files", mediaFiles.media3.file);
+      }
+
+      await uploadSpecialistMediaApi(specialistId, formData, {
+        display_order: JSON.stringify(display_order)
+      });
+
+      await publishSpecialistApi(specialistId);
+
+      setIsDrawerOpen(false);
+      setPublishConfirmationDialogOpen(false);
+      setSpecialistInput(initialSpecialistInput);
+      toast.success("Specialist created.");
+      // Redirect to all specialists page after published
+      router.push("/");
+    } catch (err) {
+      apiErrorHandler(err as AxiosError);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const onSave = async () => {
+    try {
+      setIsSaving(true);
+      const { isValid, errors } = await specialistValidator(specialistInput);
+
+      if (!isValid) {
+        setFormErrors(errors);
+        return;
+      }
+      setFormErrors(null);
+
+      // Open publish confirmation dialog
+      setPublishConfirmationDialogOpen(true);
+    } catch (err) {
+      apiErrorHandler(err as AxiosError);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div>
@@ -144,7 +246,7 @@ export default function Page() {
                   />
                 </div>
               ) : (
-                <div className="box-border flex h-112.5 items-center justify-center gap-4 rounded-lg border border-gray-300 bg-[#F5F5F5] p-4">
+                <div className="box-border flex h-112.5 flex-col items-center justify-center gap-4 rounded-lg border border-gray-300 bg-[#F5F5F5] p-4">
                   <ImageUp size={64} color="#ddd" />
                   <Typography
                     variant="body2"
@@ -195,9 +297,15 @@ export default function Page() {
             <Typography variant="h6" fontWeight={600} mt={4} mb={1}>
               Description
             </Typography>
-            <Typography variant="body2" color="#888">
-              {specialistInput?.description || "Describe your service here"}
-            </Typography>
+            {specialistInput.description ? (
+              <Typography variant="body2" color="#888">
+                {specialistInput.description}
+              </Typography>
+            ) : (
+              <Typography variant="body2" color="#aaaaaaff">
+                Describe your service here...
+              </Typography>
+            )}
           </div>
         </div>
         <div className="w-100">
@@ -205,17 +313,9 @@ export default function Page() {
             <Button
               variant="contained"
               sx={{ minWidth: 120 }}
-              onClick={() => {
-                setIsDrawerOpen(true);
-              }}
+              onClick={() => setIsDrawerOpen(true)}
             >
               Edit
-            </Button>
-            <Button
-              sx={{ bgcolor: "primary.dark", color: "white", minWidth: 120 }}
-              variant="outlined"
-            >
-              Publish
             </Button>
           </div>
           <div className="mt-3 box-border flex h-100 flex-col rounded-lg border border-gray-300 p-5">
@@ -273,15 +373,51 @@ export default function Page() {
         </div>
       </div>
       <SpecialistEditDrawer
+        onSave={onSave}
+        isSaving={isSaving}
         open={isDrawerOpen}
         mediaFiles={mediaFiles}
+        formErrors={formErrors}
         specialists={specialists}
-        specialistInput={specialistInput}
-        onClose={() => setIsDrawerOpen(false)}
-        handleFileChange={handleFileChange}
         onFileDelete={onFileDelete}
+        specialistInput={specialistInput}
+        handleFileChange={handleFileChange}
         handleInputChange={handleInputChange}
+        onClose={() => setIsDrawerOpen(false)}
       />
+      <Dialog
+        open={isPublishDialogOpen}
+        onClose={handlePublishConfirmationDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Publish Changes</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Do you want to publish these changes? It will appear in the
+            marketplace listing.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="outlined"
+            disabled={isSaving}
+            onClick={() => {
+              handlePublishConfirmationDialogClose();
+            }}
+          >
+            Continue Editing
+          </Button>
+          <Button
+            loading={isSaving}
+            sx={{ width: 120 }}
+            variant="contained"
+            onClick={onPublish}
+          >
+            Publish
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

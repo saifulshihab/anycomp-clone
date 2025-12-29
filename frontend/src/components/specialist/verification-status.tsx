@@ -1,4 +1,4 @@
-import { SpecialistVerificationStatus } from "@/types";
+import { SpecialistVerificationStatus } from "@/types/specialist";
 import { cn } from "../../../utils";
 
 type Props = {

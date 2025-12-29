@@ -1,7 +1,7 @@
-import { Alert } from "@mui/material";
+import { redirect } from "next/navigation";
 
 function Page() {
-  return <Alert severity="info">Welcome to Anycomp Clone Dashboard!</Alert>;
+  redirect("/dashboard/specialists");
 }
 
 export default Page;

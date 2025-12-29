@@ -6,7 +6,11 @@ const storage = multer.diskStorage({
     return cb(null, "uploads/");
   },
   filename(req, file, cb) {
-    cb(null, `${file.originalname}${path.extname(file.originalname)}`);
+    const specialistId = req.params.id;
+    cb(
+      null,
+      `image-${specialistId}-${file.originalname.split(".")[0]}${path.extname(file.originalname)}`
+    );
   }
 });
 
