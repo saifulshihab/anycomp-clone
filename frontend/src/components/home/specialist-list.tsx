@@ -12,7 +12,7 @@ const SpecialistList = (props: Props) => {
   const { specialists } = props;
   return (
     <div className="my-4 grid grid-cols-4 gap-6">
-      {!specialists.length ? (
+      {specialists.length ? (
         specialists.map((specialist) => {
           const thumbnailImage = specialist.media.find(
             (image) => image.display_order === 1
