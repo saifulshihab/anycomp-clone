@@ -12,7 +12,7 @@ export const AppDataSource = new DataSource({
   username: ENV_VARS.DB_USER,
   password: ENV_VARS.DB_PASSWORD,
   database: ENV_VARS.DB_NAME,
-  // url: ENV_VARS.DB_URL,
+  url: ENV_VARS.DB_URL,
   entities: [Specialist, Media, ServiceOffer, PlatformFee],
   synchronize: true,
   logging: false
