@@ -1,6 +1,7 @@
-import { cn } from "@/utils";
+import { Typography } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { cn } from "../../../utils";
 
 type Props = {
   icon: React.ReactNode;
@@ -16,14 +17,19 @@ function NavItem(props: Props) {
     <Link href={href}>
       <div
         className={cn(
-          "flex items-center gap-3 rounded px-3 py-2 transition hover:bg-[#002F70] hover:text-white",
+          "hover:bg-primary flex items-center gap-3 rounded-sm px-3 py-2 transition-all hover:text-white",
           {
-            "bg-[#002F70] text-white": isActive
+            "text-white": isActive,
+            "text-inherit": !isActive,
+            "bg-primary": isActive,
+            "bg-inherit": !isActive
           }
         )}
       >
-        <div className="shrink-0">{icon}</div>
-        <span className="truncate text-sm font-medium">{text}</span>
+        <div>{icon}</div>
+        <Typography variant="body2" sx={{ fontSize: 14, fontWeight: 500 }}>
+          {text}
+        </Typography>
       </div>
     </Link>
   );

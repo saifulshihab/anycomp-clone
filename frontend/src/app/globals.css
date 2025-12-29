@@ -1,2 +1,7 @@
 @layer theme, base, mui, components, utilities;
 @import "tailwindcss";
+
+@theme {
+  --font-display: "Red Hat Display", sans-serif;
+  --color-primary: #002f70;
+}
