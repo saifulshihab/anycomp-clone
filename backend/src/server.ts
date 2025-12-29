@@ -4,6 +4,7 @@ import app from "./app";
 import { ENV_VARS } from "./config/constant";
 import { AppDataSource } from "./config/data-source";
 import { seedPlatFormFeeData } from "./seeds/platform-fee";
+import { createFolder } from "./utils";
 
 const PORT = ENV_VARS.PORT;
 
@@ -14,6 +15,8 @@ AppDataSource.initialize()
   })
   // Seed data
   .then(() => seedPlatFormFeeData())
+  // Create `uploads` dir for storing images
+  .then(() => createFolder("uploads"))
   .catch((err) => {
     console.log("Database connection failed!", err);
     process.exit(1);

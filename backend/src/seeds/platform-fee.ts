@@ -34,6 +34,7 @@ export async function seedPlatFormFeeData() {
         const tier = PlatformFeeRepository.create(feeTier);
         await PlatformFeeRepository.save(tier);
       }
+      console.log("Platform fee data seeded successfully.");
     }
   } catch {
     console.error("Failed to seed platform fee data");
