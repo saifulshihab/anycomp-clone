@@ -8,6 +8,7 @@ import {
   uploadSpecialistMediaApi
 } from "@/api/specialistApi";
 import SpecialistEditDrawer from "@/components/specialist/create/edit-drawer";
+import { revalidateHomePage } from "@/lib/actions";
 import { ISpecialist, ISpecialistInput } from "@/types/specialist";
 import { specialistValidator } from "@/validators/specialist-validator";
 import {
@@ -147,7 +148,6 @@ export default function Page() {
   const onPublish = async () => {
     try {
       setIsSaving(true);
-
       // Create specialist first
       const { data } = await createSpecialistApi(specialistInput);
       const specialistId = data.id;
@@ -174,7 +174,6 @@ export default function Page() {
       await uploadSpecialistMediaApi(specialistId, formData, {
         display_order: JSON.stringify(display_order)
       });
-
       await publishSpecialistApi(specialistId);
 
       setIsDrawerOpen(false);
@@ -182,6 +181,7 @@ export default function Page() {
       setSpecialistInput(initialSpecialistInput);
       toast.success("Specialist created.");
       // Redirect to all specialists page after published
+      revalidateHomePage();
       router.push("/");
     } catch (err) {
       apiErrorHandler(err as AxiosError);
@@ -194,13 +194,11 @@ export default function Page() {
     try {
       setIsSaving(true);
       const { isValid, errors } = await specialistValidator(specialistInput);
-
       if (!isValid) {
         setFormErrors(errors);
         return;
       }
       setFormErrors(null);
-
       // Open publish confirmation dialog
       setPublishConfirmationDialogOpen(true);
     } catch (err) {

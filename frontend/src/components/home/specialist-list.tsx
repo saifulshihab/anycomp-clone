@@ -38,7 +38,7 @@ const SpecialistList = (props: Props) => {
               <div className="mt-1 space-y-1">
                 <div className="h-17 space-y-1">
                   <Link href={`/specialists/${specialist.id}`}>
-                    <h2 className="hover:text-primary text-lg font-bold hover:underline">
+                    <h2 className="hover:text-primary line-clamp-1 text-lg font-bold hover:underline">
                       {specialist.title}
                     </h2>
                   </Link>
