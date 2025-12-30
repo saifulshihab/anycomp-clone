@@ -24,6 +24,7 @@ import {
 import { AxiosError } from "axios";
 import { ImageUp } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -60,9 +61,11 @@ const initialSpecialistInput = {
 };
 
 export default function Page() {
+  const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const [specialistInput, setSpecialistInput] = useState<ISpecialistInput>(
     initialSpecialistInput
   );
@@ -73,8 +76,7 @@ export default function Page() {
     media3: { previewUrl: "", file: null as unknown as File }
   });
   const [specialists, setSpecialists] = useState<ISpecialist[]>([]);
-  const [isPublishDialogOpen, setPublishConfirmationDialogOpen] =
-    useState(false);
+  const [publishDialogId, setPublishDialogId] = useState<string | undefined>();
 
   const getAllSpecialists = useCallback(async () => {
     try {
@@ -139,12 +141,35 @@ export default function Page() {
       : 0;
 
   const handlePublishConfirmationDialogClose = () => {
-    setPublishConfirmationDialogOpen(false);
+    setPublishDialogId(undefined);
   };
 
   const onPublish = async () => {
     try {
+      if (!publishDialogId) return;
+      setIsPublishing(true);
+      await publishSpecialistApi(publishDialogId);
+      toast.success("Specialist published successfully.");
+      handlePublishConfirmationDialogClose();
+      // Redirect to all specialists page after the specialist was published
+      revalidateHomePage();
+    } catch (err) {
+      apiErrorHandler(err as AxiosError);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  const onSave = async () => {
+    try {
       setIsSaving(true);
+      const { isValid, errors } = await specialistValidator(specialistInput);
+      if (!isValid) {
+        setFormErrors(errors);
+        return;
+      }
+      setFormErrors(null);
+
       // Create specialist first
       const { data } = await createSpecialistApi(specialistInput);
       const specialistId = data.id;
@@ -168,35 +193,19 @@ export default function Page() {
         formData.append("files", mediaFiles.media3.file);
       }
 
-      await uploadSpecialistMediaApi(specialistId, formData, {
-        display_order: JSON.stringify(display_order)
-      });
-      await publishSpecialistApi(specialistId);
-
-      setIsDrawerOpen(false);
-      setPublishConfirmationDialogOpen(false);
-      setSpecialistInput(initialSpecialistInput);
-      toast.success("Specialist created.");
-      // Redirect to all specialists page after published
-      revalidateHomePage();
-    } catch (err) {
-      apiErrorHandler(err as AxiosError);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const onSave = async () => {
-    try {
-      setIsSaving(true);
-      const { isValid, errors } = await specialistValidator(specialistInput);
-      if (!isValid) {
-        setFormErrors(errors);
-        return;
+      if (
+        mediaFiles.media1.file ||
+        mediaFiles.media2.file ||
+        mediaFiles.media3.file
+      ) {
+        await uploadSpecialistMediaApi(specialistId, formData, {
+          display_order: JSON.stringify(display_order)
+        });
       }
-      setFormErrors(null);
-      // Open publish confirmation dialog
-      setPublishConfirmationDialogOpen(true);
+      toast.success("Specialist created.");
+
+      // Open publishin dialog
+      setPublishDialogId(data.id);
     } catch (err) {
       apiErrorHandler(err as AxiosError);
     } finally {
@@ -373,7 +382,7 @@ export default function Page() {
         onClose={() => setIsDrawerOpen(false)}
       />
       <Dialog
-        open={isPublishDialogOpen}
+        open={!!publishDialogId}
         onClose={handlePublishConfirmationDialogClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
@@ -388,15 +397,16 @@ export default function Page() {
         <DialogActions>
           <Button
             variant="outlined"
-            disabled={isSaving}
+            disabled={isPublishing}
             onClick={() => {
               handlePublishConfirmationDialogClose();
+              router.push(`/dashboard/specialists/${publishDialogId}`);
             }}
           >
             Continue Editing
           </Button>
           <Button
-            loading={isSaving}
+            loading={isPublishing}
             sx={{ width: 120 }}
             variant="contained"
             onClick={onPublish}

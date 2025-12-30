@@ -2,9 +2,19 @@
 
 import { API_BASE_URL } from "@/constants";
 import { ISpecialistWithMediaAndOfferings } from "@/types/specialist";
-import { Divider, Typography } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Typography
+} from "@mui/material";
 import { ImageOff } from "lucide-react";
 import Image from "next/image";
+import React, { useState } from "react";
 import SpecialistSkeleton from "./skeleton-loading";
 
 const ImageUploadBoxPlaceholder = () => {
@@ -20,11 +30,16 @@ const ImageUploadBoxPlaceholder = () => {
 
 type Props = {
   isLoading?: boolean;
+  isPublishing?: boolean;
+  isAuthenticated?: boolean;
   specialist: ISpecialistWithMediaAndOfferings | undefined;
+  onPublish?: () => void;
 };
 
 function Specialist(props: Props) {
-  const { isLoading, specialist } = props;
+  const { isLoading, isPublishing, isAuthenticated, specialist, onPublish } =
+    props;
+  const [isPublicDialogOpen, setIsPublishDialogOpen] = useState(false);
 
   if (isLoading) return <SpecialistSkeleton />;
   if (!specialist) return <div>Specialist not found.</div>;
@@ -40,179 +55,222 @@ function Specialist(props: Props) {
   );
 
   return (
-    <div className="flex flex-col items-start gap-4 md:flex-row">
-      <div className="w-full flex-1 md:w-auto">
-        {/* Title */}
-        <div className="mb-4">
-          <Typography variant="h5" fontWeight={600} color="#222222">
-            {specialist.title}
-          </Typography>
-        </div>
-        {/* Media */}
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-          <div>
-            {thumbnailImage ? (
-              <div className="relative h-112.5">
-                <Image
-                  fill
-                  objectFit="cover"
-                  objectPosition="center"
-                  alt={thumbnailImage.file_name}
-                  src={`${API_BASE_URL}/uploads/${thumbnailImage.file_name}`}
-                  style={{ borderRadius: "4px" }}
-                />
-              </div>
-            ) : (
-              <div className="box-border flex h-112.5 flex-col items-center justify-center gap-4 rounded-lg border border-gray-300 bg-[#F5F5F5] p-4">
-                <ImageOff size={64} color="#ddd" />
-                <Typography
-                  variant="body2"
-                  color="#888"
-                  sx={{ textAlign: "center" }}
-                >
-                  Image not found
-                </Typography>
-              </div>
-            )}
-          </div>
-          <div className="flex h-full flex-col gap-2">
-            {secondImage ? (
-              <div className="relative flex-1">
-                <Image
-                  fill
-                  alt={secondImage.file_name}
-                  src={`${API_BASE_URL}/uploads/${secondImage.file_name}`}
-                  objectFit="cover"
-                  objectPosition="center"
-                  style={{ borderRadius: "4px" }}
-                />
-              </div>
-            ) : (
-              <ImageUploadBoxPlaceholder />
-            )}
-            {thirdImage ? (
-              <div className="relative flex-1">
-                <Image
-                  fill
-                  alt={thirdImage.file_name}
-                  src={`${API_BASE_URL}/uploads/${thirdImage.file_name}`}
-                  objectFit="cover"
-                  style={{ borderRadius: "4px" }}
-                  objectPosition="center"
-                />
-              </div>
-            ) : (
-              <ImageUploadBoxPlaceholder />
-            )}
-          </div>
-        </div>
-        {/* Description */}
-        <div>
-          <Typography variant="h6" fontWeight={600} mt={4} mb={1}>
-            Description
-          </Typography>
-          <Typography variant="body2" color="#888">
-            {specialist.description}
-          </Typography>
-        </div>
-        {/* Additional offerings - Service Offering Card */}
-        {specialist.service_offerings &&
-          specialist.service_offerings.length > 0 && (
-            <div className="mt-6">
-              <Typography variant="h6" fontWeight={600} mb={1}>
-                Additional Offerings
-              </Typography>
-              <div className="flex flex-col flex-wrap gap-3 sm:flex-row">
-                {specialist.service_offerings.map(({ specialist }) => (
-                  <div
-                    key={specialist.id}
-                    className="flex max-w-xs min-w-45 flex-col rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-                  >
-                    <Typography variant="subtitle1" fontWeight={600}>
-                      {specialist.title}
-                    </Typography>
-                    {specialist.description && (
-                      <Typography
-                        variant="body2"
-                        color="#666"
-                        className="mt-1 line-clamp-2"
-                      >
-                        {specialist.description}
-                      </Typography>
-                    )}
-                    {specialist.base_price !== undefined && (
-                      <Typography
-                        variant="body2"
-                        fontWeight={500}
-                        className="mt-2"
-                      >
-                        RM {specialist.base_price}
-                      </Typography>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-      </div>
-      <div className="w-full md:w-100">
-        <div className="flex justify-end gap-3">
-          <div className="h-10" />
-        </div>
-        <div className="mt-3 box-border flex h-100 flex-col rounded-lg border border-gray-300 p-5">
-          <div>
-            <Typography variant="h5" fontWeight={600}>
-              Professional Fee
-            </Typography>
-            <Typography variant="body2" color="#888888">
-              Set a rate for your service
+    <React.Fragment>
+      <div className="flex flex-col items-start gap-4 md:flex-row">
+        <div className="w-full flex-1 md:w-auto">
+          {/* Title */}
+          <div className="mb-4">
+            <Typography variant="h5" fontWeight={600} color="#222222">
+              {specialist.title}
             </Typography>
           </div>
-          <div className="flex items-center justify-center py-5">
-            <Typography
-              variant="h4"
-              sx={{
-                mt: 3,
-                mb: 1,
-                fontWeight: 500,
-                textDecoration: "underline"
-              }}
-            >
-              RM {specialist.base_price || 0}
-            </Typography>
-          </div>
-          <div className="mt-auto">
+          {/* Media */}
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <div>
-              <div className="flex justify-between">
-                <Typography variant="body1" fontWeight={500} color="#454545">
-                  Base price
+              {thumbnailImage ? (
+                <div className="relative h-112.5">
+                  <Image
+                    fill
+                    objectFit="cover"
+                    objectPosition="center"
+                    alt={thumbnailImage.file_name}
+                    src={`${API_BASE_URL}/uploads/${thumbnailImage.file_name}`}
+                    style={{ borderRadius: "4px" }}
+                  />
+                </div>
+              ) : (
+                <div className="box-border flex h-112.5 flex-col items-center justify-center gap-4 rounded-lg border border-gray-300 bg-[#F5F5F5] p-4">
+                  <ImageOff size={64} color="#ddd" />
+                  <Typography
+                    variant="body2"
+                    color="#888"
+                    sx={{ textAlign: "center" }}
+                  >
+                    Image not found
+                  </Typography>
+                </div>
+              )}
+            </div>
+            <div className="flex h-full flex-col gap-2">
+              {secondImage ? (
+                <div className="relative flex-1">
+                  <Image
+                    fill
+                    alt={secondImage.file_name}
+                    src={`${API_BASE_URL}/uploads/${secondImage.file_name}`}
+                    objectFit="cover"
+                    objectPosition="center"
+                    style={{ borderRadius: "4px" }}
+                  />
+                </div>
+              ) : (
+                <ImageUploadBoxPlaceholder />
+              )}
+              {thirdImage ? (
+                <div className="relative flex-1">
+                  <Image
+                    fill
+                    alt={thirdImage.file_name}
+                    src={`${API_BASE_URL}/uploads/${thirdImage.file_name}`}
+                    objectFit="cover"
+                    style={{ borderRadius: "4px" }}
+                    objectPosition="center"
+                  />
+                </div>
+              ) : (
+                <ImageUploadBoxPlaceholder />
+              )}
+            </div>
+          </div>
+          {/* Description */}
+          <div>
+            <Typography variant="h6" fontWeight={600} mt={4} mb={1}>
+              Description
+            </Typography>
+            <Typography variant="body2" color="#888">
+              {specialist.description}
+            </Typography>
+          </div>
+          {/* Additional offerings - Service Offering Card */}
+          {specialist.service_offerings &&
+            specialist.service_offerings.length > 0 && (
+              <div className="mt-6">
+                <Typography variant="h6" fontWeight={600} mb={1}>
+                  Additional Offerings
                 </Typography>
-                <Typography variant="body1" fontWeight={600} color="#222222">
-                  RM {specialist.base_price || 0}
-                </Typography>
+                <div className="flex flex-col flex-wrap gap-3 sm:flex-row">
+                  {specialist.service_offerings.map(({ specialist }) => (
+                    <div
+                      key={specialist.id}
+                      className="flex max-w-xs min-w-45 flex-col rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                    >
+                      <Typography variant="subtitle1" fontWeight={600}>
+                        {specialist.title}
+                      </Typography>
+                      {specialist.description && (
+                        <Typography
+                          variant="body2"
+                          color="#666"
+                          className="mt-1 line-clamp-2"
+                        >
+                          {specialist.description}
+                        </Typography>
+                      )}
+                      {specialist.base_price !== undefined && (
+                        <Typography
+                          variant="body2"
+                          fontWeight={500}
+                          className="mt-2"
+                        >
+                          RM {specialist.base_price}
+                        </Typography>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
+            )}
+        </div>
+        <div className="w-full md:w-100">
+          <div className="flex justify-end gap-3">
+            {isAuthenticated ? (
+              <Button
+                loading={isPublishing}
+                variant="contained"
+                onClick={() => setIsPublishDialogOpen(true)}
+              >
+                Publish
+              </Button>
+            ) : (
+              <div className="h-10" />
+            )}
+          </div>
+          <div className="mt-3 box-border flex h-100 flex-col rounded-lg border border-gray-300 p-5">
+            <div>
+              <Typography variant="h5" fontWeight={600}>
+                Professional Fee
+              </Typography>
+              <Typography variant="body2" color="#888888">
+                Set a rate for your service
+              </Typography>
+            </div>
+            <div className="flex items-center justify-center py-5">
+              <Typography
+                variant="h4"
+                sx={{
+                  mt: 3,
+                  mb: 1,
+                  fontWeight: 500,
+                  textDecoration: "underline"
+                }}
+              >
+                RM {specialist.base_price || 0}
+              </Typography>
+            </div>
+            <div className="mt-auto">
+              <div>
+                <div className="flex justify-between">
+                  <Typography variant="body1" fontWeight={500} color="#454545">
+                    Base price
+                  </Typography>
+                  <Typography variant="body1" fontWeight={600} color="#222222">
+                    RM {specialist.base_price || 0}
+                  </Typography>
+                </div>
+                <div className="mt-1 flex justify-between">
+                  <Typography variant="body1" fontWeight={500} color="#454545">
+                    Platform fee
+                  </Typography>
+                  <Typography variant="body1" fontWeight={600} color="#222222">
+                    RM {specialist.platform_fee || 0}
+                  </Typography>
+                </div>
+              </div>
+              <Divider sx={{ my: 2 }} />
               <div className="mt-1 flex justify-between">
                 <Typography variant="body1" fontWeight={500} color="#454545">
-                  Platform fee
+                  Total
                 </Typography>
                 <Typography variant="body1" fontWeight={600} color="#222222">
-                  RM {specialist.platform_fee || 0}
+                  RM {specialist.final_price}
                 </Typography>
               </div>
-            </div>
-            <Divider sx={{ my: 2 }} />
-            <div className="mt-1 flex justify-between">
-              <Typography variant="body1" fontWeight={500} color="#454545">
-                Total
-              </Typography>
-              <Typography variant="body1" fontWeight={600} color="#222222">
-                RM {specialist.final_price}
-              </Typography>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <Dialog
+        open={isPublicDialogOpen}
+        onClose={() => setIsPublishDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Publish Changes</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Do you want to publish these changes? It will appear in the
+            marketplace listing.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="outlined"
+            disabled={isPublishing}
+            onClick={() => setIsPublishDialogOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            loading={isPublishing}
+            sx={{ width: 120 }}
+            variant="contained"
+            onClick={onPublish}
+          >
+            Publish
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
   );
 }
 

@@ -1,5 +1,5 @@
 import { SpecialistVerificationStatus } from "@/types/specialist";
-import { cn } from "../../../utils";
+import { cn, snakeToPlainText } from "../../../utils";
 
 type Props = {
   status: SpecialistVerificationStatus | undefined;
@@ -17,12 +17,12 @@ function SpecialistVerificationStatusBadge({ status }: Props) {
       <span
         className={cn("text-xs font-semibold", {
           "text-[#18C964]": status === SpecialistVerificationStatus.APPROVED,
-          "text-[#61E7DA]":
+          "text-[#4bb2a8]":
             status === SpecialistVerificationStatus.UNDER_REVIEW,
           "text-[#C00306]": status === SpecialistVerificationStatus.REJECTED
         })}
       >
-        {status[0].toUpperCase() + status.substring(1).toLowerCase()}
+        {snakeToPlainText(status)}
       </span>
     </div>
   ) : null;
