@@ -14,12 +14,11 @@ function Page() {
   const [specialist, setSpecialist] = useState<
     ISpecialistWithMediaAndOfferings | undefined
   >();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        setIsLoading(true);
         const { data } = await getSpecialistApi(id as string);
         setSpecialist(data);
       } catch (err) {

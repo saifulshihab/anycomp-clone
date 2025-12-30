@@ -2,9 +2,10 @@
 
 import { API_BASE_URL } from "@/constants";
 import { ISpecialistWithMediaAndOfferings } from "@/types/specialist";
-import { CircularProgress, Divider, Typography } from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 import { ImageOff } from "lucide-react";
 import Image from "next/image";
+import SpecialistSkeleton from "./skeleton-loading";
 
 const ImageUploadBoxPlaceholder = () => {
   return (
@@ -25,6 +26,7 @@ type Props = {
 function Specialist(props: Props) {
   const { isLoading, specialist } = props;
 
+  if (isLoading) return <SpecialistSkeleton />;
   if (!specialist) return <div>Specialist not found.</div>;
 
   const thumbnailImage = specialist.media.find(
@@ -37,9 +39,7 @@ function Specialist(props: Props) {
     (image) => image.display_order === 3
   );
 
-  return isLoading ? (
-    <CircularProgress />
-  ) : (
+  return (
     <div className="flex flex-col items-start gap-4 md:flex-row">
       <div className="w-full flex-1 md:w-auto">
         {/* Title */}
@@ -122,7 +122,7 @@ function Specialist(props: Props) {
               <Typography variant="h6" fontWeight={600} mb={1}>
                 Additional Offerings
               </Typography>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-col flex-wrap gap-3 sm:flex-row">
                 {specialist.service_offerings.map(({ specialist }) => (
                   <div
                     key={specialist.id}
