@@ -25,7 +25,6 @@ import {
 import { AxiosError } from "axios";
 import { ImageUp } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -62,7 +61,6 @@ const initialSpecialistInput = {
 };
 
 export default function Page() {
-  const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const [isSaving, setIsSaving] = useState(false);
@@ -182,7 +180,6 @@ export default function Page() {
       toast.success("Specialist created.");
       // Redirect to all specialists page after published
       revalidateHomePage();
-      router.push("/");
     } catch (err) {
       apiErrorHandler(err as AxiosError);
     } finally {
