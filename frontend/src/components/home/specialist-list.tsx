@@ -11,7 +11,7 @@ type Props = {
 const SpecialistList = (props: Props) => {
   const { specialists } = props;
   return (
-    <div className="my-4 grid grid-cols-4 gap-6">
+    <div className="my-4 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {specialists.length ? (
         specialists.map((specialist) => {
           const thumbnailImage = specialist.media.find(

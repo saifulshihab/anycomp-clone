@@ -7,14 +7,15 @@ type Props = {
   icon: React.ReactNode;
   text: string;
   href: string;
+  onClick?: () => void;
 };
 
 function NavItem(props: Props) {
-  const { icon, text, href } = props;
+  const { icon, text, href, onClick } = props;
   const pathname = usePathname();
   const isActive = pathname === href;
   return (
-    <Link href={href}>
+    <Link href={href} onClick={onClick}>
       <div
         className={cn(
           "hover:bg-primary flex items-center gap-3 rounded-sm px-3 py-2 transition-all hover:text-white",

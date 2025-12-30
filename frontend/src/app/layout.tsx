@@ -1,3 +1,4 @@
+import { AppContextProvider } from "@/contexts/app-context";
 import { theme } from "@/theme";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
@@ -25,7 +26,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${redHatDisplay.className}`} suppressHydrationWarning>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          <AppContextProvider>
+            <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          </AppContextProvider>
           <Toaster />
         </AppRouterCacheProvider>
       </body>

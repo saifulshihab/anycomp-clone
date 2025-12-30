@@ -164,10 +164,13 @@ function Page() {
           </Button>
         </div>
       </div>
-      <TableContainer component={Paper} sx={{ maxHeight: "60vh" }}>
+      <TableContainer
+        component={Paper}
+        sx={{ maxHeight: "60vh", minHeight: "50vh", overflowX: "auto" }}
+      >
         <Table
           stickyHeader
-          sx={{ minWidth: 650 }}
+          sx={{ overflowX: "auto" }}
           aria-label="specialists table"
         >
           <TableHead>

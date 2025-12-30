@@ -19,7 +19,6 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
-  Grid,
   Typography
 } from "@mui/material";
 import { AxiosError } from "axios";
@@ -206,9 +205,9 @@ export default function Page() {
   };
 
   return (
-    <div>
-      <div className="flex items-start gap-4">
-        <div className="flex-1">
+    <div className="h-full w-full">
+      <div className="flex flex-col items-start gap-4 md:flex-row">
+        <div className="w-full flex-1 md:w-auto">
           {/* Title */}
           <div className="mb-4">
             {specialistInput?.title ? (
@@ -222,13 +221,8 @@ export default function Page() {
             )}
           </div>
           {/* Media */}
-          <Grid
-            container
-            spacing={2}
-            justifyContent="stretch"
-            alignContent="stretch"
-          >
-            <Grid size={6}>
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+            <div>
               {mediaFiles.media1.previewUrl ? (
                 <div className="relative h-112.5">
                   <Image
@@ -253,40 +247,38 @@ export default function Page() {
                   </Typography>
                 </div>
               )}
-            </Grid>
-            <Grid size={6}>
-              <div className="flex h-full flex-col gap-2">
-                {mediaFiles.media2.previewUrl ? (
-                  <div className="relative flex-1">
-                    <Image
-                      fill
-                      alt={mediaFiles.media2.file.name}
-                      src={mediaFiles.media2.previewUrl}
-                      objectFit="cover"
-                      objectPosition="center"
-                      style={{ borderRadius: "4px" }}
-                    />
-                  </div>
-                ) : (
-                  <ImageUploadBoxPlaceholder />
-                )}
-                {mediaFiles.media3.previewUrl ? (
-                  <div className="relative flex-1">
-                    <Image
-                      fill
-                      alt={mediaFiles.media3.file.name}
-                      src={mediaFiles.media3.previewUrl}
-                      objectFit="cover"
-                      style={{ borderRadius: "4px" }}
-                      objectPosition="center"
-                    />
-                  </div>
-                ) : (
-                  <ImageUploadBoxPlaceholder />
-                )}
-              </div>
-            </Grid>
-          </Grid>
+            </div>
+            <div className="flex flex-col gap-2">
+              {mediaFiles.media2.previewUrl ? (
+                <div className="relative flex-1">
+                  <Image
+                    fill
+                    alt={mediaFiles.media2.file.name}
+                    src={mediaFiles.media2.previewUrl}
+                    objectFit="cover"
+                    objectPosition="center"
+                    style={{ borderRadius: "4px" }}
+                  />
+                </div>
+              ) : (
+                <ImageUploadBoxPlaceholder />
+              )}
+              {mediaFiles.media3.previewUrl ? (
+                <div className="relative flex-1">
+                  <Image
+                    fill
+                    alt={mediaFiles.media3.file.name}
+                    src={mediaFiles.media3.previewUrl}
+                    objectFit="cover"
+                    style={{ borderRadius: "4px" }}
+                    objectPosition="center"
+                  />
+                </div>
+              ) : (
+                <ImageUploadBoxPlaceholder />
+              )}
+            </div>
+          </div>
           {/* Description */}
           <div>
             <Typography variant="h6" fontWeight={600} mt={4} mb={1}>
@@ -303,7 +295,7 @@ export default function Page() {
             )}
           </div>
         </div>
-        <div className="w-100">
+        <div className="w-full md:w-100">
           <div className="flex justify-end gap-3">
             <Button
               variant="contained"
