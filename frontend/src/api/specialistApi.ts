@@ -13,8 +13,8 @@ export interface IGetAllSpecialistsResponse {
 }
 
 export interface IIGetAllSpecialistsParams {
-  page_number?: string;
-  page_size?: string;
+  page_number?: number;
+  page_size?: number;
   is_draft?: string;
   search?: string;
 }

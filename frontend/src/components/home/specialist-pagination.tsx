@@ -15,21 +15,25 @@ function SpecialistPagination(props: Props) {
   const router = useRouter();
 
   const [filters, setFilters] = useState<IIGetAllSpecialistsParams>({
-    page_number: searchParams.get("page_number") || "1",
-    page_size: searchParams.get("page_size") || "10"
+    page_number:
+      searchParams.get("page_number") !== undefined
+        ? Number(searchParams.get("page_number"))
+        : 1,
+    page_size:
+      searchParams.get("page_size") !== undefined
+        ? Number(searchParams.get("page_size"))
+        : 1
   });
 
   return (
     <div className="my-4 flex justify-center">
       <Pagination
         page={
-          filters.page_number !== undefined
-            ? Number(filters.page_number)
-            : undefined
+          filters.page_number !== undefined ? filters.page_number : undefined
         }
         count={totalPages}
         onChange={(_, page) => {
-          setFilters((prev) => ({ ...prev, page_number: page.toString() }));
+          setFilters((prev) => ({ ...prev, page_number: page }));
           const params = new URLSearchParams(searchParams.toString());
           if (page !== undefined && page > 0) {
             params.set("page_number", page.toString());
