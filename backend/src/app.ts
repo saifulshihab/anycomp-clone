@@ -1,6 +1,5 @@
 import cors from "cors";
 import express from "express";
-import { rateLimit } from "express-rate-limit";
 import { errorHandler, notFound } from "./middlewares/error-middleware";
 import router from "./routes/router";
 
@@ -23,18 +22,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(
-  rateLimit({
-    windowMs: 60 * 1000,
-    max: 50,
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-    message: {
-      status: 429,
-      message: "Too many request. Please try again later."
-    }
-  })
-);
+// Limit network request
+// app.use(
+//   rateLimit({
+//     windowMs: 60 * 1000,
+//     max: 50,
+//     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+//     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+//     message: {
+//       status: 429,
+//       message: "Too many request. Please try again later."
+//     }
+//   })
+// );
 
 // Routes
 app.get("/", (req, res) => {
