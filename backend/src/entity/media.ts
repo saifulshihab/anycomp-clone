@@ -32,7 +32,7 @@ export class Media {
   @Column("int", { default: 0 })
   file_size: number;
 
-  @Column("int", { default: 0 })
+  @Column("int", { default: 1 })
   display_order: number;
 
   @Column("enum", { enum: MimeType, nullable: true })

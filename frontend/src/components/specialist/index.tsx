@@ -173,7 +173,7 @@ function Specialist(props: Props) {
         </div>
         <div className="w-full md:w-100">
           <div className="flex justify-end gap-3">
-            {isAuthenticated ? (
+            {isAuthenticated && specialist.is_draft ? (
               <Button
                 loading={isPublishing}
                 variant="contained"

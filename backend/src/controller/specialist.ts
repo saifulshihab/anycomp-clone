@@ -45,7 +45,9 @@ export const getAllSpecialists = async (req: Request, res: Response) => {
   // Apply pagination
   qb.skip((pageNo - 1) * pageSize).take(pageSize);
 
-  const [specialists, count] = await qb.getManyAndCount();
+  const [specialists, count] = await qb
+    .orderBy("specialist.created_at", "ASC")
+    .getManyAndCount();
 
   res.json({
     count,
