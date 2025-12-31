@@ -1,9 +1,24 @@
-import { getAllSpecialistsApi } from "@/api/specialistApi";
+import {
+  getAllSpecialistsApi,
+  IIGetAllSpecialistsParams
+} from "@/api/specialistApi";
 import SpecialistList from "@/components/home/specialist-list";
+import SpecialistPagination from "@/components/home/specialist-pagination";
 import { Typography } from "@mui/material";
 
-export default async function Home() {
-  const { data } = await getAllSpecialistsApi({ is_draft: "false" });
+export default async function Page({
+  searchParams
+}: {
+  searchParams: IIGetAllSpecialistsParams;
+}) {
+  const { page_number, page_size } = searchParams;
+
+  const { data } = await getAllSpecialistsApi({
+    is_draft: "false",
+    page_number,
+    page_size
+  });
+
   return (
     <div>
       <div className="my-4">
@@ -15,6 +30,7 @@ export default async function Home() {
         </Typography>
       </div>
       <SpecialistList specialists={data.data} />
+      <SpecialistPagination totalPages={data.totalPages} />
     </div>
   );
 }
