@@ -4,6 +4,7 @@ import app from "./app";
 import { ENV_VARS } from "./config/constant";
 import { AppDataSource } from "./config/data-source";
 import { seedPlatFormFeeData } from "./seeds/platform-fee";
+import { seedSpecialistData } from "./seeds/specialist";
 import { createFolder } from "./utils";
 
 const PORT = ENV_VARS.PORT;
@@ -15,6 +16,7 @@ AppDataSource.initialize()
   })
   // Seed data
   .then(() => seedPlatFormFeeData())
+  .then(() => seedSpecialistData())
   // Create `uploads` dir for storing images
   .then(() => createFolder("uploads"))
   .catch((err) => {

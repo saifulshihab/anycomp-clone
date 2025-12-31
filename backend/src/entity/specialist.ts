@@ -10,7 +10,7 @@ import {
 import { Media } from "./media";
 import { ServiceOffer } from "./service-offer";
 
-enum SpecialistVerificationStatus {
+export enum SpecialistVerificationStatus {
   APPROVED = "APPROVED",
   UNDER_REVIEW = "UNDER_REVIEW",
   REJECTED = "REJECTED"
