@@ -6,13 +6,13 @@ import SpecialistList from "@/components/home/specialist-list";
 import SpecialistPagination from "@/components/home/specialist-pagination";
 import { Typography } from "@mui/material";
 
-export default async function Page({
-  searchParams
-}: {
-  searchParams: IIGetAllSpecialistsParams;
-}) {
-  const { page_number, page_size } = searchParams;
+type Props = {
+  searchParams: Promise<IIGetAllSpecialistsParams>;
+};
 
+export default async function Page(props: Props) {
+  const { searchParams } = props;
+  const { page_number, page_size } = await searchParams;
   const { data } = await getAllSpecialistsApi({
     is_draft: "false",
     page_number,
