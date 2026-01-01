@@ -10,11 +10,13 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
+  Modal,
   Typography
 } from "@mui/material";
 import { ImageOff } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
+import { cn } from "../../../utils";
 import SpecialistSkeleton from "./skeleton-loading";
 
 const ImageUploadBoxPlaceholder = () => {
@@ -40,6 +42,7 @@ function Specialist(props: Props) {
   const { isLoading, isPublishing, isAuthenticated, specialist, onPublish } =
     props;
   const [isPublicDialogOpen, setIsPublishDialogOpen] = useState(false);
+  const [modalImage, setModalImage] = useState<string | undefined>();
 
   if (isLoading) return <SpecialistSkeleton />;
   if (!specialist) return <div>Specialist not found.</div>;
@@ -73,9 +76,16 @@ function Specialist(props: Props) {
                     fill
                     objectFit="cover"
                     objectPosition="center"
+                    className={cn(thumbnailImage && "hover:cursor-pointer")}
                     alt={thumbnailImage.file_name}
                     src={`${API_BASE_URL}/uploads/${thumbnailImage.file_name}`}
                     style={{ borderRadius: "4px" }}
+                    onClick={() => {
+                      if (thumbnailImage)
+                        setModalImage(
+                          `${API_BASE_URL}/uploads/${thumbnailImage.file_name}`
+                        );
+                    }}
                   />
                 </div>
               ) : (
@@ -96,11 +106,18 @@ function Specialist(props: Props) {
                 <div className="relative flex-1">
                   <Image
                     fill
-                    alt={secondImage.file_name}
-                    src={`${API_BASE_URL}/uploads/${secondImage.file_name}`}
                     objectFit="cover"
                     objectPosition="center"
+                    alt={secondImage.file_name}
                     style={{ borderRadius: "4px" }}
+                    className={cn(secondImage && "hover:cursor-pointer")}
+                    src={`${API_BASE_URL}/uploads/${secondImage.file_name}`}
+                    onClick={() => {
+                      if (secondImage)
+                        setModalImage(
+                          `${API_BASE_URL}/uploads/${secondImage.file_name}`
+                        );
+                    }}
                   />
                 </div>
               ) : (
@@ -110,11 +127,18 @@ function Specialist(props: Props) {
                 <div className="relative flex-1">
                   <Image
                     fill
-                    alt={thirdImage.file_name}
-                    src={`${API_BASE_URL}/uploads/${thirdImage.file_name}`}
                     objectFit="cover"
-                    style={{ borderRadius: "4px" }}
                     objectPosition="center"
+                    alt={thirdImage.file_name}
+                    style={{ borderRadius: "4px" }}
+                    className={cn(thirdImage && "hover:cursor-pointer")}
+                    src={`${API_BASE_URL}/uploads/${thirdImage.file_name}`}
+                    onClick={() => {
+                      if (thirdImage)
+                        setModalImage(
+                          `${API_BASE_URL}/uploads/${thirdImage.file_name}`
+                        );
+                    }}
                   />
                 </div>
               ) : (
@@ -270,6 +294,16 @@ function Specialist(props: Props) {
           </Button>
         </DialogActions>
       </Dialog>
+      <Modal open={!!modalImage} onClose={() => setModalImage(undefined)}>
+        <div className="bg-primary relative m-auto h-full w-[80%]">
+          <Image
+            fill
+            alt={modalImage!}
+            src={modalImage!}
+            style={{ borderRadius: "4px" }}
+          />
+        </div>
+      </Modal>
     </React.Fragment>
   );
 }
