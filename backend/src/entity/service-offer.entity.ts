@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
-import { Specialist } from "./specialist";
+import { Specialist } from "./specialist.entity";
 
 @Entity("service_offerings")
 export class ServiceOffer {

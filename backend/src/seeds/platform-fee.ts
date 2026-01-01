@@ -1,5 +1,5 @@
 import { AppDataSource } from "../config/data-source";
-import { PlatformFee, TierName } from "../entity/platform-fee";
+import { PlatformFee, TierName } from "../entity/platform-fee.entity";
 
 const platformFeeSeedData = [
   {

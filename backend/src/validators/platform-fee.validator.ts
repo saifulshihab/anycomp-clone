@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { TierName } from "../entity/platform-fee";
+import { TierName } from "../entity/platform-fee.entity";
 
 export const PlatformFeeSchema = z.object({
   tier_name: z.enum(TierName, { error: "Invalid tier name." }),

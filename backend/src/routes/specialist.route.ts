@@ -7,14 +7,14 @@ import {
   getSpecialist,
   publishSpecialist,
   uploadSpecialistMedia
-} from "../controller/specialist";
+} from "../controller/specialist.controller";
 import { UUIDParamSchema } from "../validators";
 import inputValidator from "../validators/input-validator";
 import {
   GetAllSpecialistsQueryParamsSchema,
   SpecialistSchema,
   UploadSpecialistMediaQueryParamsSchema
-} from "../validators/specialist-validator";
+} from "../validators/specialist.validator";
 
 const router = express.Router();
 

@@ -3,12 +3,12 @@ import {
   createPlatformFee,
   getAllPlatformFees,
   getPlatformFeeTier
-} from "../controller/platform-fee";
+} from "../controller/platform-fee.controller";
 import inputValidator from "../validators/input-validator";
 import {
   GetPlatformFeeTierQueryParamsSchema,
   PlatformFeeSchema
-} from "../validators/platform-fee";
+} from "../validators/platform-fee.validator";
 
 const router = express.Router();
 

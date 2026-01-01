@@ -1,5 +1,5 @@
 import { AppDataSource } from "../config/data-source";
-import { PlatformFee } from "../entity/platform-fee";
+import { PlatformFee } from "../entity/platform-fee.entity";
 
 /**
  * Calculate platform fee given a specialist base price

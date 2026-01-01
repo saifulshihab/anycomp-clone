@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/data-source";
-import { PlatformFee } from "../entity/platform-fee";
-import { calculatePlatformFee } from "../utils/platform-fee";
+import { PlatformFee } from "../entity/platform-fee.entity";
+import { calculatePlatformFee } from "../utils/platform-fee.utils";
 
 const PlatformFeeRepository = AppDataSource.getRepository(PlatformFee);
 

@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/data-source";
-import { Media, MediaType, MimeType } from "../entity/media";
-import { ServiceOffer } from "../entity/service-offer";
-import { Specialist } from "../entity/specialist";
-import { calculatePlatformFee } from "../utils/platform-fee";
+import { Media, MediaType, MimeType } from "../entity/media.entity";
+import { ServiceOffer } from "../entity/service-offer.entity";
+import { Specialist } from "../entity/specialist.entity";
+import { calculatePlatformFee } from "../utils/platform-fee.utils";
 import {
   createSpecialistUniqueSlug,
   deleteFileFromDisk
-} from "../utils/specialist";
+} from "../utils/specialist.utils";
 
 const SpecialistRepository = AppDataSource.getRepository(Specialist);
 const MediaRepository = AppDataSource.getRepository(Media);

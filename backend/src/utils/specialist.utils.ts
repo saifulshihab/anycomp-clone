@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { AppDataSource } from "../config/data-source";
-import { Specialist } from "../entity/specialist";
+import { Specialist } from "../entity/specialist.entity";
 
 // Create specialist's unique slug based on title
 export const createSpecialistUniqueSlug = async (title: string) => {

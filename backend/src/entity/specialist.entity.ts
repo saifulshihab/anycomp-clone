@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
-import { Media } from "./media";
-import { ServiceOffer } from "./service-offer";
+import { Media } from "./media.entity";
+import { ServiceOffer } from "./service-offer.entity";
 
 export enum SpecialistVerificationStatus {
   APPROVED = "APPROVED",

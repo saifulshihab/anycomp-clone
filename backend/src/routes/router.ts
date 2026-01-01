@@ -1,6 +1,6 @@
 import express from "express";
-import platformFeeRoutes from "./platform-fee";
-import specialistRoutes from "./specialist";
+import platformFeeRoutes from "./platform-fee.route";
+import specialistRoutes from "./specialist.route";
 
 const router = express.Router();
 

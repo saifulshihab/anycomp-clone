@@ -1,8 +1,8 @@
 import { DataSource } from "typeorm";
-import { Media } from "../entity/media";
-import { PlatformFee } from "../entity/platform-fee";
-import { ServiceOffer } from "../entity/service-offer";
-import { Specialist } from "../entity/specialist";
+import { Media } from "../entity/media.entity";
+import { PlatformFee } from "../entity/platform-fee.entity";
+import { ServiceOffer } from "../entity/service-offer.entity";
+import { Specialist } from "../entity/specialist.entity";
 import { ENV_VARS } from "./constant";
 
 export const AppDataSource = new DataSource({

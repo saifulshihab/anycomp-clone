@@ -1,7 +1,10 @@
 import { AppDataSource } from "../config/data-source";
-import { Specialist, SpecialistVerificationStatus } from "../entity/specialist";
-import { calculatePlatformFee } from "../utils/platform-fee";
-import { createSpecialistUniqueSlug } from "../utils/specialist";
+import {
+  Specialist,
+  SpecialistVerificationStatus
+} from "../entity/specialist.entity";
+import { calculatePlatformFee } from "../utils/platform-fee.utils";
+import { createSpecialistUniqueSlug } from "../utils/specialist.utils";
 
 const specialistSeedData = [
   {
