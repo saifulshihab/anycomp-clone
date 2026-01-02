@@ -13,11 +13,36 @@ import {
   Modal,
   Typography
 } from "@mui/material";
-import { ImageOff } from "lucide-react";
+import { Fullscreen, ImageOff } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 import { cn } from "../../../utils";
 import SpecialistSkeleton from "./skeleton-loading";
+
+const ImagePreview = (props: {
+  fileName: string;
+  src: string;
+  onClick?: () => void;
+  wrapperClassname?: string;
+}) => {
+  const { fileName, src, wrapperClassname, onClick } = props;
+  return (
+    <div className={cn("group relative", wrapperClassname)}>
+      <Image
+        fill
+        src={src}
+        alt={fileName}
+        objectFit="cover"
+        onClick={onClick}
+        objectPosition="center"
+        className="rounded-sm hover:cursor-pointer"
+      />
+      <div className="pointer-events-none absolute inset-0 hidden cursor-pointer rounded-sm bg-black/50 group-hover:grid group-hover:place-content-center">
+        <Fullscreen className="text-gray-200" />
+      </div>
+    </div>
+  );
+};
 
 const ImageUploadBoxPlaceholder = () => {
   return (
@@ -71,23 +96,17 @@ function Specialist(props: Props) {
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             <div>
               {thumbnailImage ? (
-                <div className="relative h-112.5">
-                  <Image
-                    fill
-                    objectFit="cover"
-                    objectPosition="center"
-                    className={cn(thumbnailImage && "hover:cursor-pointer")}
-                    alt={thumbnailImage.file_name}
-                    src={`${API_BASE_URL}/uploads/${thumbnailImage.file_name}`}
-                    style={{ borderRadius: "4px" }}
-                    onClick={() => {
-                      if (thumbnailImage)
-                        setModalImage(
-                          `${API_BASE_URL}/uploads/${thumbnailImage.file_name}`
-                        );
-                    }}
-                  />
-                </div>
+                <ImagePreview
+                  wrapperClassname="h-112.5"
+                  fileName={thumbnailImage.file_name}
+                  src={`${API_BASE_URL}/uploads/${thumbnailImage.file_name}`}
+                  onClick={() => {
+                    if (thumbnailImage)
+                      setModalImage(
+                        `${API_BASE_URL}/uploads/${thumbnailImage.file_name}`
+                      );
+                  }}
+                />
               ) : (
                 <div className="box-border flex h-112.5 flex-col items-center justify-center gap-4 rounded-lg border border-gray-300 bg-[#F5F5F5] p-4">
                   <ImageOff size={64} color="#ddd" />
@@ -103,44 +122,32 @@ function Specialist(props: Props) {
             </div>
             <div className="flex h-full flex-col gap-2">
               {secondImage ? (
-                <div className="relative flex-1">
-                  <Image
-                    fill
-                    objectFit="cover"
-                    objectPosition="center"
-                    alt={secondImage.file_name}
-                    style={{ borderRadius: "4px" }}
-                    className={cn(secondImage && "hover:cursor-pointer")}
-                    src={`${API_BASE_URL}/uploads/${secondImage.file_name}`}
-                    onClick={() => {
-                      if (secondImage)
-                        setModalImage(
-                          `${API_BASE_URL}/uploads/${secondImage.file_name}`
-                        );
-                    }}
-                  />
-                </div>
+                <ImagePreview
+                  wrapperClassname="flex-1"
+                  fileName={secondImage.file_name}
+                  src={`${API_BASE_URL}/uploads/${secondImage.file_name}`}
+                  onClick={() => {
+                    if (secondImage)
+                      setModalImage(
+                        `${API_BASE_URL}/uploads/${secondImage.file_name}`
+                      );
+                  }}
+                />
               ) : (
                 <ImageUploadBoxPlaceholder />
               )}
               {thirdImage ? (
-                <div className="relative flex-1">
-                  <Image
-                    fill
-                    objectFit="cover"
-                    objectPosition="center"
-                    alt={thirdImage.file_name}
-                    style={{ borderRadius: "4px" }}
-                    className={cn(thirdImage && "hover:cursor-pointer")}
-                    src={`${API_BASE_URL}/uploads/${thirdImage.file_name}`}
-                    onClick={() => {
-                      if (thirdImage)
-                        setModalImage(
-                          `${API_BASE_URL}/uploads/${thirdImage.file_name}`
-                        );
-                    }}
-                  />
-                </div>
+                <ImagePreview
+                  wrapperClassname="flex-1"
+                  fileName={thirdImage.file_name}
+                  src={`${API_BASE_URL}/uploads/${thirdImage.file_name}`}
+                  onClick={() => {
+                    if (thirdImage)
+                      setModalImage(
+                        `${API_BASE_URL}/uploads/${thirdImage.file_name}`
+                      );
+                  }}
+                />
               ) : (
                 <ImageUploadBoxPlaceholder />
               )}
