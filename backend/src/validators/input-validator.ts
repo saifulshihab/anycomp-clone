@@ -18,16 +18,20 @@ export default (
       next();
     } catch (err) {
       let schemaError;
+
+      let isZodError = false;
       if (err instanceof ZodError) {
         const errors: ZodError[] = JSON.parse(err as any);
         schemaError = errors.reduce((prev: any, curr: any) => {
           prev[curr.path[0]] = curr.message;
           return prev;
         }, {});
+        isZodError = true;
       }
-      const errorResponse = Object.entries(schemaError).length
-        ? schemaError
-        : { message: "Invalid input." };
+      const errorResponse =
+        isZodError && Object.entries(schemaError).length
+          ? schemaError
+          : { message: "Invalid input." };
       res.status(400).json(errorResponse);
     }
   };
